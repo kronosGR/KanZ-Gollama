@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { ipcCalls } from './ipcCalls'
 
 function createWindow(): void {
   // Create the browser window.
@@ -36,6 +37,9 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+// Register IPC calls
+ipcCalls()
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
