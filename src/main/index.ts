@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { ipcCalls } from './ipcCalls'
+import { c } from 'vite/dist/node/types.d-aGj9QkWt'
 
 function createWindow(): void {
   // Create the browser window.
@@ -14,8 +15,23 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false
     }
+  })
+
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders((dt, cb) => {
+    cb({ requestHeaders: { Origin: '*', ...dt.requestHeaders } })
+  })
+
+  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        'Access-Control-Allow-Origin': ['*'],
+        ...details.responseHeaders
+      }
+    })
   })
 
   if (is.dev) mainWindow.webContents.openDevTools()

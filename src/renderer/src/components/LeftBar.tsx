@@ -1,4 +1,5 @@
 import React from 'react'
+import Models from './Models'
 
 export default function LeftBar(): JSX.Element {
   return (
@@ -7,7 +8,7 @@ export default function LeftBar(): JSX.Element {
         <h2>Chats</h2>
       </div>
       <div className="h-3/6 bg-slate-100 p-1">
-        <h2>Models</h2>
+        <Models />
       </div>
     </div>
   )
