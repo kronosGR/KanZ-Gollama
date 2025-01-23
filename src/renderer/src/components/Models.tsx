@@ -5,6 +5,7 @@ import { IApiModel } from '@renderer/interfaces/IApiModel'
 import { BounceLoader } from 'react-spinners'
 import { MODELS_GET_BY_NAME, MODELS_GET_URL } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
+import { IoSettings } from 'react-icons/io5'
 
 const loadingCSS: CSSProperties = {
   display: 'block',
@@ -69,7 +70,12 @@ export default function Models(): JSX.Element {
   }, [])
   return (
     <div>
-      <div>Models</div>
+      <div className="flex justify-between">
+        <h2 className="text-xl font-bold">Models</h2>
+        <p title="Settings" className="cursor-pointer">
+          <IoSettings />
+        </p>
+      </div>
       <select onChange={(e) => handleModelChange(e)}>
         {models.map((model) => (
           <option key={model.model} value={model.model}>
@@ -77,7 +83,11 @@ export default function Models(): JSX.Element {
           </option>
         ))}
       </select>
-      {model ? <ModelInfo model={model} /> : <div>No model selected</div>}
+      {model ? (
+        <ModelInfo model={model} />
+      ) : (
+        <div className="text-center m-2 text-blue-700">No model selected</div>
+      )}
       <BounceLoader
         color="blue"
         loading={isLoading}
