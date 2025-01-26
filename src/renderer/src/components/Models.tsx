@@ -6,6 +6,8 @@ import { BounceLoader } from 'react-spinners'
 import { MODELS_GET_BY_NAME, MODELS_GET_URL } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
 import { IoSettings } from 'react-icons/io5'
+import ModelSettingsModal from '@renderer/utils/ModelSettingsModal'
+import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 
 const loadingCSS: CSSProperties = {
   display: 'block',
@@ -17,6 +19,8 @@ export default function Models(): JSX.Element {
   const [models, setModels] = React.useState<IModel[]>([])
   const [model, setModel] = React.useState<IModel | null>(null)
   const [isLoading, setIsLoading] = React.useState<boolean>(true)
+
+  const { showModal } = useModalsContext()
 
   useEffect(() => {
     // console.log(models)
@@ -73,7 +77,11 @@ export default function Models(): JSX.Element {
       <div className="flex justify-between">
         <h2 className="text-xl font-bold">Models</h2>
         <p title="Settings" className="cursor-pointer">
-          <IoSettings />
+          <button
+            onClick={() => showModal(MODALS.MODEL_SETTINGS_MODAL, { title: 'Model Settings' })}
+          >
+            <IoSettings />
+          </button>
         </p>
       </div>
       <select onChange={(e) => handleModelChange(e)}>
