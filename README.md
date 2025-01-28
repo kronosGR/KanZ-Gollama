@@ -8,6 +8,7 @@ An GUI application for Ollama. The user can manage models, have multiple convers
 
 - Electron.js
 - React.js
+- TypeScript
 - SQLite - to store all the conversations
 
 ## Progress
