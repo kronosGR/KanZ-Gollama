@@ -1,33 +1,24 @@
-import React, { CSSProperties, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { fetchUrl } from '../utils/fetchUrl'
 import { IModel } from '@renderer/interfaces/IModel'
 import { IApiModel } from '@renderer/interfaces/IApiModel'
-import { BounceLoader } from 'react-spinners'
 import { MODELS_GET_BY_NAME, MODELS_GET_URL } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
 import { IoSettings } from 'react-icons/io5'
-import ModelSettingsModal from '@renderer/utils/ModelSettingsModal'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
-
-const loadingCSS: CSSProperties = {
-  display: 'block',
-  margin: '0 auto',
-  borderColor: 'red'
-}
 
 export default function Models(): JSX.Element {
   const [models, setModels] = React.useState<IModel[]>([])
   const [model, setModel] = React.useState<IModel | null>(null)
-  const [isLoading, setIsLoading] = React.useState<boolean>(true)
 
-  const { showModal } = useModalsContext()
+  const { showModal, hideModal } = useModalsContext()
 
   useEffect(() => {
     // console.log(models)
   }, [models])
 
   const handleModelChange = async (e): void => {
-    setIsLoading(true)
+    showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
     const modelName = e.target.options[e.target.selectedIndex].value
 
     const options = {
@@ -48,12 +39,12 @@ export default function Models(): JSX.Element {
       quantizationLevel: jsonModel.details?.quantization_level
     })
 
-    setIsLoading(false)
+    hideModal()
   }
 
   useEffect(() => {
     const onStart = async (): Promise<void> => {
-      setIsLoading(true)
+      showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
       const json = await fetchUrl(MODELS_GET_URL, {})
 
       const modelsData: IModel[] = (json['models'] as IApiModel[]).map((model: IApiModel) => ({
@@ -67,7 +58,7 @@ export default function Models(): JSX.Element {
         quantizationLevel: model.details?.quantization_level
       }))
       setModels(modelsData)
-      setIsLoading(false)
+      hideModal()
     }
 
     onStart()
@@ -96,14 +87,6 @@ export default function Models(): JSX.Element {
       ) : (
         <div className="text-center m-2 text-blue-700">No model selected</div>
       )}
-      <BounceLoader
-        color="blue"
-        loading={isLoading}
-        cssOverride={loadingCSS}
-        size={150}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
     </div>
   )
 }

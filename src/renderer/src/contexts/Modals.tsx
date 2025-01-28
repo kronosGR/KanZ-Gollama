@@ -1,12 +1,15 @@
+import { Loading } from '@renderer/components/Loading'
 import { ModelSettings } from '@renderer/components/ModelSettings'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 
 export const MODALS = {
-  MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL'
+  MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL',
+  LOADING_MODAL: 'LOADING_MODAL'
 }
 
 const MODAL_COMPONENTS = {
-  [MODALS.MODEL_SETTINGS_MODAL]: ModelSettings
+  [MODALS.MODEL_SETTINGS_MODAL]: ModelSettings,
+  [MODALS.LOADING_MODAL]: Loading
 }
 
 interface ModalProps {
