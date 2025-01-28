@@ -8,17 +8,20 @@ export const ModelSettings: React.FC = () => {
 
   return (
     <div className="absolute z-[999] bg-slate-400 w-svw bg-opacity-60 transition-opacity duration-300  h-svh flex justify-center items-center">
-      <div className=" border border-gray-300  p-4">
-        <h1 className="">{title}</h1>
+      <div className="w-5/6 h-5/6 border bg-white border-gray-300">
+        <div className="w-full bg-slate-700 text-white flex justify-between items-center p-4">
+          <div className="font-bold">{title}</div>
 
-        <button
-          type="button"
-          onClick={() => {
-            hideModal()
-          }}
-        >
-          &#9587;
-        </button>
+          <button
+            className="font-extrabold"
+            type="button"
+            onClick={() => {
+              hideModal()
+            }}
+          >
+            &#9587;
+          </button>
+        </div>
       </div>
     </div>
   )
