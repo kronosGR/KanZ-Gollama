@@ -1,34 +1,15 @@
-# kanz-gollama
+# KandZ - Gollama
 
-An Electron application with React and TypeScript
+**Work under progress**
 
-## Recommended IDE Setup
+An GUI application for Ollama. The user can manage models, have multiple conversations with different model. Also to copy/paste parts of the conversations.
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+## Technologies
 
-## Project Setup
+- Electron.js
+- React.js
+- SQLite - to store all the conversations
 
-### Install
+## Progress
 
-```bash
-$ npm install
-```
-
-### Development
-
-```bash
-$ npm run dev
-```
-
-### Build
-
-```bash
-# For windows
-$ npm run build:win
-
-# For macOS
-$ npm run build:mac
-
-# For Linux
-$ npm run build:linux
-```
+Follow the progress to this [short playlist](https://www.youtube.com/playlist?list=PLw_kA6-6CnFLiWDvSWnyTQ60DXH9ssBtT)
