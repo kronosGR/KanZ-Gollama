@@ -1,4 +1,4 @@
-import { useModalsContext } from '@renderer/contexts/Modals'
+import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 import React, { CSSProperties, ReactNode } from 'react'
 import { BounceLoader } from 'react-spinners'
 
@@ -10,9 +10,8 @@ const loadingCSS: CSSProperties = {
 }
 
 export const Loading = (): ReactNode => {
-  const { store } = useModalsContext()
-  const { modalProps } = store || {}
-  const { title } = modalProps || {}
+  const { getInfoModal } = useModalsContext()
+  const { title } = getInfoModal(MODALS.LOADING_MODAL).modalProps
 
   return (
     <div className="flex h-svh w-svw absolute justify-center items-center">

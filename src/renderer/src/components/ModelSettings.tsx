@@ -5,11 +5,11 @@ import { MODELS_GET_URL } from '@renderer/utils/constants'
 import { fetchUrl } from '@renderer/utils/fetchUrl'
 import { normalizeModel } from '@renderer/utils/normalizeModel'
 import React, { useEffect } from 'react'
+import { ModelList } from './ModelList'
 
 export const ModelSettings: React.FC = () => {
-  const { showModal, hideModal, store } = useModalsContext()
-  const { modalProps } = store || {}
-  const { title } = modalProps || {}
+  const { showModal, hideModal, getInfoModal } = useModalsContext()
+  const { title } = getInfoModal(MODALS.MODEL_SETTINGS_MODAL).modalProps
   const [models, setModels] = React.useState<IModel[]>([])
 
   useEffect(() => {
@@ -41,11 +41,14 @@ export const ModelSettings: React.FC = () => {
             className="font-extrabold"
             type="button"
             onClick={() => {
-              hideModal()
+              hideModal(MODALS.MODEL_SETTINGS_MODAL)
             }}
           >
             &#9587;
           </button>
+        </div>
+        <div className="p-4">
+          <ModelList models={models} />
         </div>
       </div>
     </div>

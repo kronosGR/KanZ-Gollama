@@ -29,6 +29,7 @@ interface ModalStore {
 type ContextType = {
   showModal: (modalType: string, modalProps: ModalProps) => void
   hideModal: (modalType: string) => void
+  getInfoModal: (modalType: string) => { modalType: string; modalProps: ModalProps }
   store: ModalStore
 }
 
@@ -44,6 +45,7 @@ const initialStateStore: ModalStore = {
 const initialState: ContextType = {
   showModal: () => {},
   hideModal: () => {},
+  getInfoModal: (modalType: string) => ({ modalType, modalProps: {} }),
   store: initialStateStore
 }
 
@@ -54,9 +56,9 @@ export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [store, setStore] = useState(initialStateStore)
   const modals = store.modals
 
-  useEffect(() => {
-    console.log(store)
-  }, [store])
+  // useEffect(() => {
+  //   console.log(store)
+  // }, [store])
 
   const showModal = (modalType: string, modalProps: ModalProps): void => {
     setStore({
@@ -73,11 +75,16 @@ export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
   const hideModal = (modalType: string): void => {
     if (!modalType) return
     const newModals = store.modals.filter((modal) => modal.modalType !== modalType)
-    console.log('----', newModals)
     setStore({
       ...store,
       modals: newModals
     })
+  }
+
+  const getInfoModal = (modalType: string): Modal => {
+    if (!modalType) return { modalType, modalProps: {} }
+    const tmpModal = store.modals.filter((modal) => modal.modalType === modalType)
+    return tmpModal[0]
   }
 
   const showModals = (): ReactNode => {
@@ -91,13 +98,10 @@ export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
         })}
       </>
     )
-    // const ModalTmpComp = MODAL_COMPONENTS[modals.modalType]
-    // if (modals.length === 0 || !ModalTmpComp) return null
-    // return <ModalTmpComp id="modal" {...modals.modalProps} />
   }
 
   return (
-    <ModalsContext.Provider value={{ store, showModal, hideModal }}>
+    <ModalsContext.Provider value={{ store, showModal, hideModal, getInfoModal }}>
       {showModals()}
       {children}
     </ModalsContext.Provider>
