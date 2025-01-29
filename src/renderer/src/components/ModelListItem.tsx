@@ -8,6 +8,12 @@ interface IProps {
   model: IModel
 }
 
+// showModal(MODALS.NOTIFICATION_MODAL, {
+//   title: 'Notification',
+//   message: 'ssss fdsf fdsf dsfg dads dfg df   dsgd avg dsf f',
+//   type: 'success'
+// })
+
 export const ModelListItem: React.FC<IProps> = ({ model }) => {
   const deleteModel = async (e: React.MouseEvent<SVGAElement>): Promise<void> => {
     e.preventDefault()

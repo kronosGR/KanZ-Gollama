@@ -46,6 +46,7 @@ export default function Models(): JSX.Element {
 
   useEffect(() => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
+
     const onStart = async (): Promise<void> => {
       const json = await fetchUrl(MODELS_GET_URL, {})
 

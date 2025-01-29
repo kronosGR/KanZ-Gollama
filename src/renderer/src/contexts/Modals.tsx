@@ -1,20 +1,25 @@
 import { Loading } from '@renderer/components/Loading'
 import { ModelSettings } from '@renderer/components/ModelSettings'
+import { Notification } from '@renderer/components/Notification'
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 export const MODALS = {
   MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL',
-  LOADING_MODAL: 'LOADING_MODAL'
+  LOADING_MODAL: 'LOADING_MODAL',
+  NOTIFICATION_MODAL: 'NOTIFICATION_MODAL'
 }
 
 const MODAL_COMPONENTS = {
   [MODALS.MODEL_SETTINGS_MODAL]: ModelSettings,
-  [MODALS.LOADING_MODAL]: Loading
+  [MODALS.LOADING_MODAL]: Loading,
+  [MODALS.NOTIFICATION_MODAL]: Notification
 }
 
 interface ModalProps {
   title?: string
   content?: ReactNode
+  message?: string
+  type?: string
 }
 
 interface Modal {
@@ -61,14 +66,16 @@ export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
   // }, [store])
 
   const showModal = (modalType: string, modalProps: ModalProps): void => {
+    const newModals = [
+      ...store.modals,
+      {
+        modalType,
+        modalProps
+      }
+    ]
     setStore({
       ...store,
-      modals: [
-        {
-          modalType,
-          modalProps
-        }
-      ]
+      modals: newModals
     })
   }
 
