@@ -6,6 +6,8 @@ import { MODELS_GET_BY_NAME, MODELS_GET_URL } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
 import { IoSettings } from 'react-icons/io5'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
+import { normalize } from 'path'
+import { normalizeModel } from '@renderer/utils/normalizeModel'
 
 export default function Models(): JSX.Element {
   const [models, setModels] = React.useState<IModel[]>([])
@@ -39,26 +41,19 @@ export default function Models(): JSX.Element {
       quantizationLevel: jsonModel.details?.quantization_level
     })
 
-    hideModal()
+    hideModal(MODALS.LOADING_MODAL)
   }
 
   useEffect(() => {
+    showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
     const onStart = async (): Promise<void> => {
-      showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
       const json = await fetchUrl(MODELS_GET_URL, {})
 
-      const modelsData: IModel[] = (json['models'] as IApiModel[]).map((model: IApiModel) => ({
-        name: model.name,
-        model: model.model,
-        size: +model.size,
-        family: model.details?.family,
-        format: model.details?.format,
-        parameterSize: model.details?.parameter_size,
-        parameterModel: model.details?.parameter_model,
-        quantizationLevel: model.details?.quantization_level
-      }))
+      const modelsData: IModel[] = (json['models'] as IApiModel[]).map((model: IApiModel) =>
+        normalizeModel(model)
+      )
       setModels(modelsData)
-      hideModal()
+      hideModal(MODALS.LOADING_MODAL)
     }
 
     onStart()

@@ -1,6 +1,6 @@
 import { Loading } from '@renderer/components/Loading'
 import { ModelSettings } from '@renderer/components/ModelSettings'
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 export const MODALS = {
   MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL',
@@ -17,20 +17,28 @@ interface ModalProps {
   content?: ReactNode
 }
 
-interface ModalStore {
+interface Modal {
   modalType: string | null
   modalProps: ModalProps
 }
 
+interface ModalStore {
+  modals: Modal[]
+}
+
 type ContextType = {
   showModal: (modalType: string, modalProps: ModalProps) => void
-  hideModal: () => void
+  hideModal: (modalType: string) => void
   store: ModalStore
 }
 
 const initialStateStore: ModalStore = {
-  modalType: null,
-  modalProps: {}
+  modals: [
+    {
+      modalType: null,
+      modalProps: {}
+    }
+  ]
 }
 
 const initialState: ContextType = {
@@ -44,29 +52,48 @@ export const useModalsContext = (): ContextType => useContext(ModalsContext)
 
 export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [store, setStore] = useState(initialStateStore)
-  const { modalType, modalProps } = store
+  const modals = store.modals
+
+  useEffect(() => {
+    console.log(store)
+  }, [store])
 
   const showModal = (modalType: string, modalProps: ModalProps): void => {
     setStore({
       ...store,
-      modalType,
-      modalProps
+      modals: [
+        {
+          modalType,
+          modalProps
+        }
+      ]
     })
   }
 
-  const hideModal = (): void => {
+  const hideModal = (modalType: string): void => {
+    if (!modalType) return
+    const newModals = store.modals.filter((modal) => modal.modalType !== modalType)
+    console.log('----', newModals)
     setStore({
       ...store,
-      modalType: null,
-      modalProps: {}
+      modals: newModals
     })
   }
 
   const showModals = (): ReactNode => {
-    if (!modalType) return null
-    const ModalTmpComp = MODAL_COMPONENTS[modalType]
-    if (!modalType || !ModalTmpComp) return null
-    return <ModalTmpComp id="modal" {...modalProps} />
+    if (modals.length === 0) return null
+    return (
+      <>
+        {modals.map((modal, index) => {
+          const ModalTmpComp = MODAL_COMPONENTS[modal.modalType as string]
+          if (!ModalTmpComp) return null
+          return <ModalTmpComp key={index} {...modal.modalProps} />
+        })}
+      </>
+    )
+    // const ModalTmpComp = MODAL_COMPONENTS[modals.modalType]
+    // if (modals.length === 0 || !ModalTmpComp) return null
+    // return <ModalTmpComp id="modal" {...modals.modalProps} />
   }
 
   return (

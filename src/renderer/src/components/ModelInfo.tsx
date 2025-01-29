@@ -6,9 +6,9 @@ interface ModelInfoProps {
 }
 
 const ModelInfo: React.FC<ModelInfoProps> = ({ model }) => {
-  useEffect(() => {
-    console.log(model)
-  }, [model])
+  // useEffect(() => {
+  //   console.log(model)
+  // }, [model])
   return (
     <div className="border mt-2 p-2 text-sm">
       <h3 className="font-bold border-b-2 border-red-700">Model Information</h3>
