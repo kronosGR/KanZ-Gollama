@@ -12,9 +12,9 @@ export const ModelSettings: React.FC = () => {
   const { title } = getInfoModal(MODALS.MODEL_SETTINGS_MODAL).modalProps
   const [models, setModels] = React.useState<IModel[]>([])
 
-  useEffect(() => {
-    console.log(models)
-  }, [models])
+  // useEffect(() => {
+  //   console.log(models)
+  // }, [models])
 
   useEffect(() => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
@@ -28,7 +28,7 @@ export const ModelSettings: React.FC = () => {
     }
 
     onStart()
-    hideModal(MODALS.LOADING_MODAL)
+    hideModal(MODALS.LOADING_MODAL, 'Loading...')
   }, [])
 
   return (
@@ -41,7 +41,7 @@ export const ModelSettings: React.FC = () => {
             className="font-extrabold"
             type="button"
             onClick={() => {
-              hideModal(MODALS.MODEL_SETTINGS_MODAL)
+              hideModal(MODALS.MODEL_SETTINGS_MODAL, 'Model Settings')
             }}
           >
             &#9587;

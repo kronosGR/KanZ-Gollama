@@ -18,7 +18,7 @@ export const ModelList: React.FC<IProps> = ({ models }) => {
   }
 
   return (
-    <div>
+    <div className="overflow-auto border max-h-1/2">
       <ModelItems />
     </div>
   )

@@ -14,7 +14,7 @@ export const Loading = (): ReactNode => {
   const { title } = getInfoModal(MODALS.LOADING_MODAL).modalProps
 
   return (
-    <div className="flex h-svh w-svw absolute justify-center items-center">
+    <div className="z-[1000] flex h-svh w-svw absolute justify-center items-center">
       <BounceLoader
         color="blue"
         loading={true}

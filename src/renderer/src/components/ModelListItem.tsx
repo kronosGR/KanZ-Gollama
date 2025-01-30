@@ -3,22 +3,46 @@ import { convertBytes } from '@renderer/utils/convertBytes'
 import { MdDeleteForever } from 'react-icons/md'
 
 import React from 'react'
+import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
+import { MODELS_DELETE_BY_NAME } from '@renderer/utils/constants'
+import { fetchUrl } from '@renderer/utils/fetchUrl'
 
 interface IProps {
   model: IModel
 }
 
-// showModal(MODALS.NOTIFICATION_MODAL, {
-//   title: 'Notification',
-//   message: 'ssss fdsf fdsf dsfg dads dfg df   dsgd avg dsf f',
-//   type: 'success'
-// })
-
 export const ModelListItem: React.FC<IProps> = ({ model }) => {
+  const { showModal, hideModal } = useModalsContext()
+
   const deleteModel = async (e: React.MouseEvent<SVGAElement>): Promise<void> => {
     e.preventDefault()
-    console.log(e.currentTarget.id)
+    const id = e.currentTarget.id
+    console.log(id)
+
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: JSON.stringify({ name: id })
+    }
+
+    // const response = (await fetchUrl(MODELS_DELETE_BY_NAME, options)) as unknown as IStatusResponse
+    // console.log('--Response', response)
+
+    await fetchUrl(MODELS_DELETE_BY_NAME, options)
+    showModal(MODALS.NOTIFICATION_MODAL, {
+      title: 'Model deleted',
+      message: `The model ${id} has been deleted.`,
+      type: 'success'
+    })
+
+    setTimeout(() => {
+      hideModal(MODALS.MODEL_SETTINGS_MODAL, 'Model Settings')
+      showModal(MODALS.MODEL_SETTINGS_MODAL, { title: 'Model Settings' })
+    }, 3200)
   }
+
   return (
     <div className="flex w-full hover:bg-gray-100 text-sm cursor-text  ">
       <div className="w-2/6 ms-3" title="Model Name">

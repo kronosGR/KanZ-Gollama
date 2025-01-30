@@ -33,7 +33,7 @@ interface ModalStore {
 
 type ContextType = {
   showModal: (modalType: string, modalProps: ModalProps) => void
-  hideModal: (modalType: string) => void
+  hideModal: (modalType: string, title: string) => void
   getInfoModal: (modalType: string) => { modalType: string; modalProps: ModalProps }
   store: ModalStore
 }
@@ -73,15 +73,19 @@ export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
         modalProps
       }
     ]
+    // console.log('---show', newModals)
     setStore({
       ...store,
       modals: newModals
     })
   }
 
-  const hideModal = (modalType: string): void => {
+  const hideModal = (modalType: string, title: string): void => {
     if (!modalType) return
-    const newModals = store.modals.filter((modal) => modal.modalType !== modalType)
+    const newModals = store.modals.filter(
+      (modal) => modal.modalType !== modalType && modal.modalProps.title !== title
+    )
+    // console.log('---hide', newModals)
     setStore({
       ...store,
       modals: newModals

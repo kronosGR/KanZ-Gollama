@@ -6,7 +6,6 @@ import { MODELS_GET_BY_NAME, MODELS_GET_URL } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
 import { IoSettings } from 'react-icons/io5'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
-import { normalize } from 'path'
 import { normalizeModel } from '@renderer/utils/normalizeModel'
 
 export default function Models(): JSX.Element {
@@ -28,8 +27,17 @@ export default function Models(): JSX.Element {
       body: JSON.stringify({ name: modelName })
     }
 
-    const jsonModel = (await fetchUrl(MODELS_GET_BY_NAME, options)) as IApiModel
+    const jsonModel = (await fetchUrl(MODELS_GET_BY_NAME, options)) as IApiModel | string
 
+    if (typeof jsonModel === 'string') {
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Error',
+        message: "Couldn't fetch model",
+        type: 'error'
+      })
+      hideModal(MODALS.LOADING_MODAL, 'Loading...')
+      return
+    }
     setModel({
       name: modelName,
       model: modelName,
@@ -41,20 +49,20 @@ export default function Models(): JSX.Element {
       quantizationLevel: jsonModel.details?.quantization_level
     })
 
-    hideModal(MODALS.LOADING_MODAL)
+    hideModal(MODALS.LOADING_MODAL, 'Loading...')
   }
 
   useEffect(() => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
 
     const onStart = async (): Promise<void> => {
-      const json = await fetchUrl(MODELS_GET_URL, {})
+      const json = (await fetchUrl(MODELS_GET_URL, {})) as IApiModel | string
 
       const modelsData: IModel[] = (json['models'] as IApiModel[]).map((model: IApiModel) =>
         normalizeModel(model)
       )
       setModels(modelsData)
-      hideModal(MODALS.LOADING_MODAL)
+      hideModal(MODALS.LOADING_MODAL, 'Loading...')
     }
 
     onStart()

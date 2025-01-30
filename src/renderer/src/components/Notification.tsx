@@ -7,13 +7,13 @@ export const Notification: React.FC = (): ReactNode => {
 
   useEffect(() => {
     setTimeout(() => {
-      hideModal(MODALS.NOTIFICATION_MODAL)
+      hideModal(MODALS.NOTIFICATION_MODAL, 'Model deleted')
     }, 3000)
   }, [])
 
   return (
     <div
-      className={`absolute border bottom-1 w-2/6 mb-1 ms-1 p-1 text-white ${type === 'success' ? 'bg-green-600' : 'bg-red-700'} `}
+      className={`z-[1000] absolute border bottom-1 w-2/6 mb-1 ms-1 p-1 text-white ${type === 'success' ? 'bg-green-600' : 'bg-red-700'} `}
     >
       <div className="border-b-2">{title}</div>
       <div>{message}</div>

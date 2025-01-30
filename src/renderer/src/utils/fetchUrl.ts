@@ -1,6 +1,13 @@
 import { IFetchParams } from '../interfaces/IFetchParams'
+import { isResponseJSON } from './isResponseJSON'
 
-export const fetchUrl = async <T>(url: string, options: IFetchParams): Promise<T> => {
+export const fetchUrl = async (url: string, options: IFetchParams): Promise<Response | string> => {
   const response = await fetch(url, options)
-  return (await response.json()) as T
+  if (isResponseJSON(response)) {
+    // console.log('Response is JSON')
+    return await response.json()
+  } else {
+    // console.log('Response is not JSON')
+    return await response.text()
+  }
 }
