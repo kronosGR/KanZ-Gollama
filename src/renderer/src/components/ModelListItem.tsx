@@ -1,18 +1,19 @@
 import { IModel } from '@renderer/interfaces/IModel'
 import { convertBytes } from '@renderer/utils/convertBytes'
 import { MdDeleteForever } from 'react-icons/md'
-
 import React from 'react'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 import { MODELS_DELETE_BY_NAME } from '@renderer/utils/constants'
 import { fetchUrl } from '@renderer/utils/fetchUrl'
+import { useModelStore } from '@renderer/stores/useModelsStore'
 
 interface IProps {
   model: IModel
 }
 
 export const ModelListItem: React.FC<IProps> = ({ model }) => {
-  const { showModal, hideModal } = useModalsContext()
+  const { showModal } = useModalsContext()
+  const { getModels } = useModelStore()
 
   const deleteModel = async (e: React.MouseEvent<SVGAElement>): Promise<void> => {
     e.preventDefault()
@@ -37,10 +38,7 @@ export const ModelListItem: React.FC<IProps> = ({ model }) => {
       type: 'success'
     })
 
-    setTimeout(() => {
-      hideModal(MODALS.MODEL_SETTINGS_MODAL, 'Model Settings')
-      showModal(MODALS.MODEL_SETTINGS_MODAL, { title: 'Model Settings' })
-    }, 3200)
+    await getModels()
   }
 
   return (

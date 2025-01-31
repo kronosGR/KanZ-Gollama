@@ -1,16 +1,12 @@
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
-import { IApiModel } from '@renderer/interfaces/IApiModel'
-import { IModel } from '@renderer/interfaces/IModel'
-import { MODELS_GET_URL } from '@renderer/utils/constants'
-import { fetchUrl } from '@renderer/utils/fetchUrl'
-import { normalizeModel } from '@renderer/utils/normalizeModel'
 import React, { useEffect } from 'react'
 import { ModelList } from './ModelList'
+import { useModelStore } from '@renderer/stores/useModelsStore'
 
 export const ModelSettings: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
   const { title } = getInfoModal(MODALS.MODEL_SETTINGS_MODAL).modalProps
-  const [models, setModels] = React.useState<IModel[]>([])
+  const { models, getModels } = useModelStore()
 
   // useEffect(() => {
   //   console.log(models)
@@ -18,16 +14,8 @@ export const ModelSettings: React.FC = () => {
 
   useEffect(() => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
-    const onStart = async (): Promise<void> => {
-      const json = await fetchUrl(MODELS_GET_URL, {})
 
-      const modelsData: IModel[] = (json['models'] as IApiModel[]).map((model: IApiModel) =>
-        normalizeModel(model)
-      )
-      setModels(modelsData)
-    }
-
-    onStart()
+    getModels()
     hideModal(MODALS.LOADING_MODAL, 'Loading...')
   }, [])
 

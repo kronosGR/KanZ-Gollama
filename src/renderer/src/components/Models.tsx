@@ -2,21 +2,21 @@ import React, { useEffect } from 'react'
 import { fetchUrl } from '../utils/fetchUrl'
 import { IModel } from '@renderer/interfaces/IModel'
 import { IApiModel } from '@renderer/interfaces/IApiModel'
-import { MODELS_GET_BY_NAME, MODELS_GET_URL } from '@renderer/utils/constants'
+import { MODELS_GET_BY_NAME } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
 import { IoSettings } from 'react-icons/io5'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
-import { normalizeModel } from '@renderer/utils/normalizeModel'
+import { useModelStore } from '@renderer/stores/useModelsStore'
 
 export default function Models(): JSX.Element {
-  const [models, setModels] = React.useState<IModel[]>([])
   const [model, setModel] = React.useState<IModel | null>(null)
+  const { models, getModels } = useModelStore()
 
   const { showModal, hideModal } = useModalsContext()
 
   useEffect(() => {
-    // console.log(models)
-  }, [models])
+    getModels()
+  }, [getModels])
 
   const handleModelChange = async (e): void => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
@@ -54,19 +54,10 @@ export default function Models(): JSX.Element {
 
   useEffect(() => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
-
-    const onStart = async (): Promise<void> => {
-      const json = (await fetchUrl(MODELS_GET_URL, {})) as IApiModel | string
-
-      const modelsData: IModel[] = (json['models'] as IApiModel[]).map((model: IApiModel) =>
-        normalizeModel(model)
-      )
-      setModels(modelsData)
-      hideModal(MODALS.LOADING_MODAL, 'Loading...')
-    }
-
-    onStart()
+    getModels()
+    hideModal(MODALS.LOADING_MODAL, 'Loading...')
   }, [])
+
   return (
     <div>
       <div className="flex justify-between">

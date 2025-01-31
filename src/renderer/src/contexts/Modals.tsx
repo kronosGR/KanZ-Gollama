@@ -1,7 +1,7 @@
 import { Loading } from '@renderer/components/Loading'
 import { ModelSettings } from '@renderer/components/ModelSettings'
 import { Notification } from '@renderer/components/Notification'
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useContext, useState } from 'react'
 
 export const MODALS = {
   MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL',
