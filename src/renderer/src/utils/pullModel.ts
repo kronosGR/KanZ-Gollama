@@ -26,18 +26,18 @@ export const pullModel = async (
     let prvTotalLength = 0
     let prvReceivedLength = 0
     let receivedLength = 0
+    let messageObject: IProgressResponse = {} as IProgressResponse
     const reader = response.body.getReader()
 
     let result = await reader.read()
     while (result.done === false) {
       const resMsg = new TextDecoder().decode(result.value)
       try {
-        const msg = JSON.parse(resMsg)
-        if (!isNaN(msg.total)) {
+        const msg = JSON.parse(resMsg) as IProgressResponse
+        messageObject = msg
+        if (typeof msg.total === 'number' && !isNaN(msg.total)) {
           // console.log('Total length ', msg.total)
-          if (totalLength === msg.total) {
-            console.log('Total length is the same')
-          } else {
+          if (totalLength !== msg.total) {
             totalLength = +msg.total
             if (totalLength !== prvTotalLength) {
               prvTotalLength += totalLength
@@ -46,7 +46,8 @@ export const pullModel = async (
             // console.log('Total length ', msg.total, totalLength, prvTotalLength)
           }
         }
-        if (!isNaN(msg.completed)) {
+
+        if (typeof msg.completed === 'number' && !isNaN(msg.completed)) {
           receivedLength = msg.completed
           // console.log('Received', receivedLength, ' / ', prvReceivedLength, ' / ', prvTotalLength)
         }
@@ -56,7 +57,7 @@ export const pullModel = async (
       }
 
       const progress: IProgressResponse = {
-        status: 'Pulling model...',
+        status: messageObject.status,
         total: totalLength >= prvTotalLength ? totalLength : prvTotalLength,
         completed: receivedLength >= prvReceivedLength ? receivedLength : prvReceivedLength
       }
