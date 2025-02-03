@@ -13,12 +13,11 @@ interface IProps {
 
 export const ModelListItem: React.FC<IProps> = ({ model }) => {
   const { showModal } = useModalsContext()
-  const { getModels } = useModelStore()
+  const { getModels, isDownloading } = useModelStore()
 
   const deleteModel = async (e: React.MouseEvent<SVGAElement>): Promise<void> => {
     e.preventDefault()
     const id = e.currentTarget.id
-    console.log(id)
 
     const options = {
       method: 'DELETE',
@@ -59,7 +58,13 @@ export const ModelListItem: React.FC<IProps> = ({ model }) => {
         {convertBytes(model.size)}
       </div>
       <div className="w-1/12 flex justify-end items-center text-red-700" title="Remove Model">
-        <MdDeleteForever id={model.name} className="cursor-pointer" onClick={deleteModel} />
+        <MdDeleteForever
+          id={model.name}
+          className={
+            isDownloading ? 'cursor-wait pointer-events-none' : 'cursor-pointer pointer-events-auto'
+          }
+          onClick={deleteModel}
+        />
       </div>
     </div>
   )

@@ -9,21 +9,34 @@ import { IProgressResponse } from '@renderer/interfaces/IProgressResponse'
 export const ModelSettings: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
   const { title } = getInfoModal(MODALS.MODEL_SETTINGS_MODAL).modalProps
-  const { models, getModels } = useModelStore()
+  const { models, getModels, isDownloading, setIsDownloading } = useModelStore()
   const [progress, setProgress] = useState(0)
-  const [isDownloading, setIsDownloading] = useState(false)
   const [progressStatus, setProgressStatus] = useState<string | undefined>('')
   const [modelName, setModelName] = useState('smollm:135m')
 
   // useEffect(() => {
-  //   console.log(models)
-  // }, [models])
+  //   console.log(progressStatus)
+  // }, [progressStatus])
 
-  useEffect(() => {}, [progress])
+  useEffect(() => {
+    const asyncExs = async (): Promise<void> => {
+      await getModels()
+    }
+
+    if (!isDownloading && progressStatus === 'success') {
+      asyncExs()
+      setModelName('')
+
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Model Pulled',
+        message: `The model ${modelName} has been pulled.`,
+        type: 'success'
+      })
+    }
+  }, [progressStatus])
 
   useEffect(() => {
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
-
     getModels()
     hideModal(MODALS.LOADING_MODAL, 'Loading...')
   }, [])
@@ -41,18 +54,20 @@ export const ModelSettings: React.FC = () => {
         setProgress((response.completed / response.total) * 100)
       }
       if (response.status === 'success') {
-        setTimeout(() => {
-          getModels()
-          setIsDownloading(false)
-          showModal(MODALS.NOTIFICATION_MODAL, {
-            title: 'Model Pulled',
-            message: `The model ${modelName} has been pulled.`,
-            type: 'success'
-          })
-        }, 2000)
+        setIsDownloading(false)
+      }
+
+      console.log(response)
+
+      if (response.status.error) {
+        showModal(MODALS.NOTIFICATION_MODAL, {
+          title: 'Error',
+          message: result.error,
+          type: 'error'
+        })
+        setIsDownloading(false)
       }
     })
-    setIsDownloading(false)
   }
 
   return (
@@ -82,7 +97,8 @@ export const ModelSettings: React.FC = () => {
               <div className="flex justify-center items-center">
                 <label htmlFor="model">Model Name</label>
                 <input
-                  className="border m-2 border-gray-300 p-2"
+                  disabled={isDownloading}
+                  className="border m-2 border-gray-300 p-2 disabled:text-gray-400"
                   type="text"
                   value={modelName}
                   onChange={(e) => {
@@ -91,7 +107,7 @@ export const ModelSettings: React.FC = () => {
                 />
                 <button
                   type="button"
-                  className="bg-blue-500 text-white p-2 rounded"
+                  className="bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
                   onClick={handleDownload}
                   disabled={isDownloading}
                 >

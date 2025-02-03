@@ -5,7 +5,7 @@ import { IProgressResponse } from '@renderer/interfaces/IProgressResponse'
 export const pullModel = async (
   request: IPullRequest,
   onProgress: (response: IProgressResponse) => void
-): void => {
+): Promise<void> => {
   const host = MODELS_PULL
   if (request.stream) {
     const abortController = new AbortController()
@@ -18,22 +18,28 @@ export const pullModel = async (
       signal: abortController.signal
     })
 
-    if (!response.body) {
-      throw new Error('Missing body')
-    }
-
     let totalLength = 0
     let prvTotalLength = 0
     let prvReceivedLength = 0
     let receivedLength = 0
     let messageObject: IProgressResponse = {} as IProgressResponse
+    let error: unknown | null
     const reader = response.body.getReader()
 
     let result = await reader.read()
-    while (result.done === false) {
+    let shouldStop = false
+
+    while (!result.done && !shouldStop) {
       const resMsg = new TextDecoder().decode(result.value)
       try {
         const msg = JSON.parse(resMsg) as IProgressResponse
+
+        if ('error' in msg) {
+          error = { message: resMsg.error || 'Failed to pull model' }
+          shouldStop = true
+          break
+        }
+
         messageObject = msg
         if (typeof msg.total === 'number' && !isNaN(msg.total)) {
           // console.log('Total length ', msg.total)
@@ -57,10 +63,16 @@ export const pullModel = async (
       }
 
       const progress: IProgressResponse = {
-        status: messageObject.status,
+        status:
+          typeof error === 'object' && error !== null && 'message' in error
+            ? (error as { message: string }).message
+            : resMsg.indexOf('success') >= 0
+              ? 'success'
+              : `Downloading model ${request.model}...`,
         total: totalLength >= prvTotalLength ? totalLength : prvTotalLength,
         completed: receivedLength >= prvReceivedLength ? receivedLength : prvReceivedLength
       }
+
       onProgress(progress)
 
       result = await reader.read()

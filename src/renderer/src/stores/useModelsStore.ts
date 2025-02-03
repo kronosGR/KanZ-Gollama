@@ -6,12 +6,15 @@ import { normalizeModel } from '@renderer/utils/normalizeModel'
 import { create } from 'zustand'
 
 interface ModelState {
+  isDownloading: boolean
   models: IModel[]
   getModels: () => Promise<void>
+  setIsDownloading: (isDownloading: boolean) => void
 }
 
 export const useModelStore = create<ModelState>((set) => ({
   models: [],
+  isDownloading: false,
   getModels: async (): Promise<void> => {
     const json = (await fetchUrl(MODELS_GET_URL, {})) as IApiModel | string
 
@@ -20,5 +23,6 @@ export const useModelStore = create<ModelState>((set) => ({
     )
 
     set({ models: modelsData })
-  }
+  },
+  setIsDownloading: (isDownloading: boolean): void => set({ isDownloading })
 }))
