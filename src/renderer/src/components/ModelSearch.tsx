@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import * as cheerio from 'cheerio'
 import { useModelStore } from '@renderer/stores/useModelsStore'
 import { contents } from '../../../../node_modules/cheerio/dist/browser/api/traversing'
+import { SearchList } from './SearchList'
 
 export const ModelSearch: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
@@ -10,11 +11,12 @@ export const ModelSearch: React.FC = () => {
   const { models, getModels, isDownloading, setIsDownloading, isModelExists } = useModelStore()
   const [query, setQuery] = useState<string>('deep')
   const [foundModels, setFoundModels] = useState<string[]>([])
+  const [modelParameters, setModelParameters] = useState<string[]>([])
   const [isSearching, setIsSearching] = useState<boolean>(false)
 
   useEffect(() => {
-    console.log(foundModels)
-  }, [foundModels])
+    console.log(modelParameters)
+  }, [modelParameters])
 
   const handleSearch = async (): Promise<void> => {
     setIsSearching(true)
@@ -31,6 +33,27 @@ export const ModelSearch: React.FC = () => {
     })
     setIsSearching(false)
     hideModal(MODALS.LOADING_MODAL, 'Loading...')
+  }
+
+  const handleParameterGet: React.MouseEventHandler<HTMLDivElement> = async (e): Promise<void> => {
+    setIsSearching(true)
+    showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
+    const item = e.currentTarget.dataset.model
+    // console.log('clicked', item)
+
+    const response = await fetch(`https://ollama.com/library/${item}`, {})
+    const $ = await cheerio.load(await response.text())
+
+    const params = $(`a[href^="/library/${item}:"]`).each((i, link) => {
+      const tmp = $(link).attr('href')?.replace('/library/', '')
+      if (tmp) {
+        setModelParameters((prv) => [...prv, tmp])
+        // console.log(tmp)
+      }
+    })
+
+    hideModal(MODALS.LOADING_MODAL, 'Loading...')
+    setIsSearching(false)
   }
 
   return (
@@ -69,8 +92,11 @@ export const ModelSearch: React.FC = () => {
               onClick={handleSearch}
               disabled={isSearching}
             >
-              Pull Model
+              Search Model
             </button>
+          </div>
+          <div className="flex flex-col justify-center items-center ">
+            <SearchList models={foundModels} onClick={handleParameterGet} />
           </div>
         </div>
       </div>
