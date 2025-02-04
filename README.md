@@ -15,6 +15,7 @@ An GUI application for Ollama. The user can manage models, have multiple convers
 ## Progress
 
 Current state
-![CurrentState](./READMEassets/Dev%20-%20Gollama%204.mp4)
+
+<video src="./READMEassets/Dev%20-%20Gollama%204.mp4" width="200" />
 
 Follow the progress to this [short playlist](https://www.youtube.com/playlist?list=PLw_kA6-6CnFLiWDvSWnyTQ60DXH9ssBtT)
