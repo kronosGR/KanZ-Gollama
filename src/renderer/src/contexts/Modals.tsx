@@ -1,16 +1,19 @@
 import { Loading } from '@renderer/components/Loading'
+import { ModelSearch } from '@renderer/components/ModelSearch'
 import { ModelSettings } from '@renderer/components/ModelSettings'
 import { Notification } from '@renderer/components/Notification'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 
 export const MODALS = {
   MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL',
+  MODEL_SEARCH: 'MODEL_SEARCH',
   LOADING_MODAL: 'LOADING_MODAL',
   NOTIFICATION_MODAL: 'NOTIFICATION_MODAL'
 }
 
 const MODAL_COMPONENTS = {
   [MODALS.MODEL_SETTINGS_MODAL]: ModelSettings,
+  [MODALS.MODEL_SEARCH]: ModelSearch,
   [MODALS.LOADING_MODAL]: Loading,
   [MODALS.NOTIFICATION_MODAL]: Notification
 }

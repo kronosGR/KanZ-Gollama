@@ -5,6 +5,7 @@ import { useModelStore } from '@renderer/stores/useModelsStore'
 import { pullModel } from '@renderer/utils/pullModel'
 import { IPullRequest } from '@renderer/interfaces/IPullRequest'
 import { IProgressResponse } from '@renderer/interfaces/IProgressResponse'
+import { FaSearch } from 'react-icons/fa'
 
 export const ModelSettings: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
@@ -132,6 +133,15 @@ export const ModelSettings: React.FC = () => {
                   disabled={isDownloading}
                 >
                   Pull Model
+                </button>
+                <button
+                  type="button"
+                  className="bg-blue-500 text-white p-2 rounded disabled:bg-gray-400 ml-2 p-2 h-10 w-10 flex justify-center items-center"
+                  onClick={() => showModal(MODALS.MODEL_SEARCH, { title: 'Model Search' })}
+                  disabled={isDownloading}
+                  title="Search Model"
+                >
+                  <FaSearch />
                 </button>
               </div>
               {isDownloading && (
