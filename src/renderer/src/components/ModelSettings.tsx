@@ -9,7 +9,7 @@ import { IProgressResponse } from '@renderer/interfaces/IProgressResponse'
 export const ModelSettings: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
   const { title } = getInfoModal(MODALS.MODEL_SETTINGS_MODAL).modalProps
-  const { models, getModels, isDownloading, setIsDownloading } = useModelStore()
+  const { models, getModels, isDownloading, setIsDownloading, isModelExists } = useModelStore()
   const [progress, setProgress] = useState(0)
   const [progressStatus, setProgressStatus] = useState<string | undefined>('')
   const [modelName, setModelName] = useState('smollm:135m')
@@ -48,23 +48,32 @@ export const ModelSettings: React.FC = () => {
       stream: true,
       insecure: false
     }
+    if (isModelExists(modelName)) {
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Error',
+        message: 'Model already pulled',
+        type: 'error'
+      })
+      setIsDownloading(false)
+      return
+    }
+
     await pullModel(request, (response: IProgressResponse) => {
+      if (response.status === 'Failed to pull model') {
+        console.log(response)
+        showModal(MODALS.NOTIFICATION_MODAL, {
+          title: 'Error',
+          message: response.status,
+          type: 'error'
+        })
+        setIsDownloading(false)
+      }
+
       if (response.total && response.completed) {
         setProgressStatus(response.status)
         setProgress((response.completed / response.total) * 100)
       }
       if (response.status === 'success') {
-        setIsDownloading(false)
-      }
-
-      console.log(response)
-
-      if (response.status.error) {
-        showModal(MODALS.NOTIFICATION_MODAL, {
-          title: 'Error',
-          message: result.error,
-          type: 'error'
-        })
         setIsDownloading(false)
       }
     })

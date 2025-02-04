@@ -9,6 +9,7 @@ interface ModelState {
   isDownloading: boolean
   models: IModel[]
   getModels: () => Promise<void>
+  isModelExists: (name: string) => boolean
   setIsDownloading: (isDownloading: boolean) => void
 }
 
@@ -23,6 +24,9 @@ export const useModelStore = create<ModelState>((set) => ({
     )
 
     set({ models: modelsData })
+  },
+  isModelExists: (name: string): boolean => {
+    return useModelStore.getState().models.some((model: IModel) => model.name === name)
   },
   setIsDownloading: (isDownloading: boolean): void => set({ isDownloading })
 }))
