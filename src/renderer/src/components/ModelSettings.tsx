@@ -48,6 +48,17 @@ export const ModelSettings: React.FC = () => {
       stream: true,
       insecure: false
     }
+
+    if (modelName === null || modelName === '') {
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Error',
+        message: 'Please enter a model name',
+        type: 'error'
+      })
+      setIsDownloading(false)
+      return
+    }
+
     if (isModelExists(modelName)) {
       showModal(MODALS.NOTIFICATION_MODAL, {
         title: 'Error',
