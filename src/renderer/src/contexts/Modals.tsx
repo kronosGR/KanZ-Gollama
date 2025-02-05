@@ -108,6 +108,7 @@ export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
         {modals.map((modal, index) => {
           const ModalTmpComp = MODAL_COMPONENTS[modal.modalType as string]
           if (!ModalTmpComp) return null
+          // console.log('---show modals', index, ' ', modal.modalType)
           return <ModalTmpComp key={index} {...modal.modalProps} />
         })}
       </>

@@ -26,7 +26,7 @@ export const SearchList: React.FC<IProps> = ({ models, onClick }) => {
   }
 
   return (
-    <div className="h-full overflow-auto border max-h-1/2">
+    <div className="h-5/6 overflow-auto border ">
       <ModelItems />
     </div>
   )

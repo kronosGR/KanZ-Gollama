@@ -1,18 +1,21 @@
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as cheerio from 'cheerio'
 import { useModelStore } from '@renderer/stores/useModelsStore'
 import { contents } from '../../../../node_modules/cheerio/dist/browser/api/traversing'
 import { SearchList } from './SearchList'
+import { IModel } from '@renderer/interfaces/IModel'
 
 export const ModelSearch: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
-  const { title } = getInfoModal(MODALS.MODEL_SEARCH).modalProps
-  const { models, getModels, isDownloading, setIsDownloading, isModelExists } = useModelStore()
-  const [query, setQuery] = useState<string>('deep')
+  const { modelName, setModelName } = useModelStore()
+  const [query, setQuery] = useState<string>('')
   const [foundModels, setFoundModels] = useState<string[]>([])
   const [modelParameters, setModelParameters] = useState<string[]>([])
   const [isSearching, setIsSearching] = useState<boolean>(false)
+  const selectRef = useRef<HTMLSelectElement>(null)
+
+  const { title } = getInfoModal(MODALS.MODEL_SEARCH).modalProps
 
   useEffect(() => {
     console.log(modelParameters)
@@ -25,6 +28,8 @@ export const ModelSearch: React.FC = () => {
     const $ = await cheerio.load(await response.text())
 
     const models = $('h2')
+    setFoundModels([])
+    setModelParameters([])
     models.each((i, element) => {
       const txt = $(element).text().trim()
       if (txt) {
@@ -37,6 +42,7 @@ export const ModelSearch: React.FC = () => {
 
   const handleParameterGet: React.MouseEventHandler<HTMLDivElement> = async (e): Promise<void> => {
     setIsSearching(true)
+    setModelParameters([])
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
     const item = e.currentTarget.dataset.model
     // console.log('clicked', item)
@@ -56,8 +62,16 @@ export const ModelSearch: React.FC = () => {
     setIsSearching(false)
   }
 
+  const handleUseModel = (): void => {
+    const selectedModel = selectRef.current?.value
+    if (selectedModel) {
+      setModelName(selectedModel)
+      hideModal(MODALS.MODEL_SEARCH, 'Model Search')
+    }
+  }
+
   return (
-    <div className="absolute z-[999] bg-slate-400 w-svw bg-opacity-60 transition-opacity duration-300  h-svh flex justify-center items-center">
+    <div className="absolute z-[999] bg-slate-400 w-svw bg-opacity-60 transition-opacity duration-300  h-svh flex justify-center items-center ">
       <div className="w-5/6 h-5/6 border bg-white border-gray-300">
         <div className="w-full bg-slate-700 text-white flex justify-between items-center p-4">
           <div className="font-bold">{title}</div>
@@ -66,14 +80,13 @@ export const ModelSearch: React.FC = () => {
             className="font-extrabold"
             type="button"
             onClick={() => {
-              hideModal(MODALS.MODEL_SETTINGS_MODAL, 'Model Search')
-              showModal(MODALS.MODEL_SETTINGS_MODAL, { title: 'Model Settings' })
+              hideModal(MODALS.MODEL_SEARCH, 'Model Search')
             }}
           >
             &#9587;
           </button>
         </div>
-        <div className="m-2">
+        <div className="m-2 h-full">
           <div className="flex justify-center items-center h-10 m-1">
             <label htmlFor="query">Search for </label>
             <input
@@ -95,9 +108,30 @@ export const ModelSearch: React.FC = () => {
               Search Model
             </button>
           </div>
-          <div className="flex flex-col justify-center items-center ">
-            <SearchList models={foundModels} onClick={handleParameterGet} />
-          </div>
+          {foundModels.length > 1 && (
+            <div className="flex flex-col justify-center items-center h-3/6 ">
+              <SearchList models={foundModels} onClick={handleParameterGet} />
+            </div>
+          )}
+          {modelParameters.length > 0 && (
+            <div className="flex flex-col justify-center items-center mt-5">
+              Select model to use
+              <select className="mt-2" ref={selectRef}>
+                {modelParameters.map((model: string) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="mt-2 bg-blue-500 text-white p-2 rounded disabled:bg-gray-400"
+                onClick={handleUseModel}
+              >
+                Use Model
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

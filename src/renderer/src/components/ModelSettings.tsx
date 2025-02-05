@@ -10,10 +10,17 @@ import { FaSearch } from 'react-icons/fa'
 export const ModelSettings: React.FC = () => {
   const { showModal, hideModal, getInfoModal } = useModalsContext()
   const { title } = getInfoModal(MODALS.MODEL_SETTINGS_MODAL).modalProps
-  const { models, getModels, isDownloading, setIsDownloading, isModelExists } = useModelStore()
+  const {
+    models,
+    getModels,
+    isDownloading,
+    setIsDownloading,
+    isModelExists,
+    modelName,
+    setModelName
+  } = useModelStore()
   const [progress, setProgress] = useState(0)
   const [progressStatus, setProgressStatus] = useState<string | undefined>('')
-  const [modelName, setModelName] = useState('smollm:135m')
 
   // useEffect(() => {
   //   console.log(progressStatus)

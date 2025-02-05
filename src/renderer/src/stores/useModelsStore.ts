@@ -8,13 +8,16 @@ import { create } from 'zustand'
 interface ModelState {
   isDownloading: boolean
   models: IModel[]
+  modelName: string
   getModels: () => Promise<void>
   isModelExists: (name: string) => boolean
   setIsDownloading: (isDownloading: boolean) => void
+  setModelName: (name: string) => void
 }
 
 export const useModelStore = create<ModelState>((set) => ({
   models: [],
+  modelName: '',
   isDownloading: false,
   getModels: async (): Promise<void> => {
     const json = (await fetchUrl(MODELS_GET_URL, {})) as IApiModel | string
@@ -28,5 +31,6 @@ export const useModelStore = create<ModelState>((set) => ({
   isModelExists: (name: string): boolean => {
     return useModelStore.getState().models.some((model: IModel) => model.name === name)
   },
-  setIsDownloading: (isDownloading: boolean): void => set({ isDownloading })
+  setIsDownloading: (isDownloading: boolean): void => set({ isDownloading }),
+  setModelName: (name: string): void => set({ modelName: name })
 }))
