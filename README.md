@@ -16,6 +16,6 @@ An GUI application for Ollama. The user can manage models, have multiple convers
 
 Current state
 
-<video src="https://github.com/user-attachments/assets/26ee1c7b-006b-437f-8f17-c4a07361ffc2"  width="200" ></video>
+<video src="https://github.com/user-attachments/assets/b5675f0d-ed4e-4b12-8dcd-9db27fd5dcc3"  width="200" ></video>
 
 Follow the progress to this [short playlist](https://www.youtube.com/playlist?list=PLw_kA6-6CnFLiWDvSWnyTQ60DXH9ssBtT)
