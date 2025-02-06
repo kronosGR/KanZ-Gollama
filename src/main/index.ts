@@ -3,13 +3,14 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { ipcCalls } from './ipcCalls'
-import { c } from 'vite/dist/node/types.d-aGj9QkWt'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: is.dev ? 1400 : 1000,
-    height: 970,
+    minWidth: 1000,
+    height: 950,
+    minHeight: 950,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -17,18 +18,28 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      webSecurity: is.dev ? false : true
     }
   })
 
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders((dt, cb) => {
-    cb({ requestHeaders: { Origin: '*', ...dt.requestHeaders } })
+    dt.requestHeaders['User-Agent'] =
+      'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'
+    dt.requestHeaders['Origin'] = 'http://localhost'
+    cb({
+      requestHeaders: {
+        Origin: '*',
+        ...dt.requestHeaders
+      }
+    })
   })
 
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
         'Access-Control-Allow-Origin': ['*'],
+        'Access-Control-Allow-Headers': ['*'],
         ...details.responseHeaders
       }
     })

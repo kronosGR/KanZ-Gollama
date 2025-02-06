@@ -105,7 +105,7 @@ export const ModelSettings: React.FC = () => {
       abortController.signal
     )
     if (result && 'message' in result) {
-      console.log('Aborted')
+      // console.log('Aborted')
       showModal(MODALS.NOTIFICATION_MODAL, {
         title: 'Error',
         message: result.message,

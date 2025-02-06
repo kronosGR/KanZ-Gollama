@@ -17,9 +17,9 @@ export const ModelSearch: React.FC = () => {
 
   const { title } = getInfoModal(MODALS.MODEL_SEARCH).modalProps
 
-  useEffect(() => {
-    console.log(modelParameters)
-  }, [modelParameters])
+  // useEffect(() => {
+  //   console.log(modelParameters)
+  // }, [modelParameters])
 
   const handleSearch = async (): Promise<void> => {
     setIsSearching(true)
