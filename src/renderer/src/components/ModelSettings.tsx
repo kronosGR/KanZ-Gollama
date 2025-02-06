@@ -126,7 +126,7 @@ export const ModelSettings: React.FC = () => {
   }
 
   return (
-    <div className="absolute z-[999] bg-slate-400 w-svw bg-opacity-60 transition-opacity duration-300  h-svh flex justify-center items-center">
+    <div className="absolute z-[999] bg-slate-400 w-svw bg-opacity-60 transition-opacity duration-300 h-screen flex  justify-center items-center">
       <div className="w-5/6 h-5/6 border bg-white border-gray-300">
         <div className="w-full bg-slate-700 text-white flex justify-between items-center p-4">
           <div className="font-bold">{title}</div>
@@ -141,14 +141,14 @@ export const ModelSettings: React.FC = () => {
             &#9587;
           </button>
         </div>
-        <div className="h-full flex flex-col p-4">
+        <div className="h-[90%] flex flex-col p-4">
           <div className="h-3/5">
             <span className="font-bold">Installed Models</span>
             <ModelList models={models} />
           </div>
           <div className="h-2/5 mt-10">
             <span className="font-bold">Pull a Model</span>
-            <div className="border border-gray-300 p-4 h-2/3">
+            <div className="border border-gray-300 p-4 h-[90%]">
               <div className="flex justify-center items-center">
                 <label htmlFor="model">Model Name</label>
                 <input
