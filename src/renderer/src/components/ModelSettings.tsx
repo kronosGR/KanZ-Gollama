@@ -1,5 +1,5 @@
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ModelList } from './ModelList'
 import { useModelStore } from '@renderer/stores/useModelsStore'
 import { pullModel } from '@renderer/utils/pullModel'
@@ -21,6 +21,7 @@ export const ModelSettings: React.FC = () => {
   } = useModelStore()
   const [progress, setProgress] = useState(0)
   const [progressStatus, setProgressStatus] = useState<string | undefined>('')
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   // useEffect(() => {
   //   console.log(progressStatus)
@@ -50,6 +51,9 @@ export const ModelSettings: React.FC = () => {
   }, [])
 
   const handleDownload = async (): Promise<void> => {
+    const abortController = new AbortController()
+    abortControllerRef.current = abortController
+
     setIsDownloading(true)
     const request: IPullRequest = {
       model: modelName,
@@ -77,25 +81,48 @@ export const ModelSettings: React.FC = () => {
       return
     }
 
-    await pullModel(request, (response: IProgressResponse) => {
-      if (response.status === 'Failed to pull model') {
-        console.log(response)
-        showModal(MODALS.NOTIFICATION_MODAL, {
-          title: 'Error',
-          message: response.status,
-          type: 'error'
-        })
-        setIsDownloading(false)
-      }
+    const result = await pullModel(
+      request,
+      (response: IProgressResponse) => {
+        if (response.status === 'Failed to pull model') {
+          console.log(response)
+          showModal(MODALS.NOTIFICATION_MODAL, {
+            title: 'Error',
+            message: response.status,
+            type: 'error'
+          })
+          setIsDownloading(false)
+        }
 
-      if (response.total && response.completed) {
-        setProgressStatus(response.status)
-        setProgress((response.completed / response.total) * 100)
-      }
-      if (response.status === 'success') {
-        setIsDownloading(false)
-      }
-    })
+        if (response.total && response.completed) {
+          setProgressStatus(response.status)
+          setProgress((response.completed / response.total) * 100)
+        }
+        if (response.status === 'success') {
+          setIsDownloading(false)
+        }
+      },
+      abortController.signal
+    )
+    if (result && 'message' in result) {
+      console.log('Aborted')
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Error',
+        message: result.message,
+        type: 'error'
+      })
+      setIsDownloading(false)
+      return
+    }
+  }
+
+  const handleAbort = (): void => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      setIsDownloading(false)
+      setProgress(0)
+      setProgressStatus('Download aborted')
+    }
   }
 
   return (
@@ -141,6 +168,15 @@ export const ModelSettings: React.FC = () => {
                 >
                   Pull Model
                 </button>
+                {isDownloading && (
+                  <button
+                    type="button"
+                    className="bg-red-500 text-white p-2 rounded ml-2"
+                    onClick={handleAbort}
+                  >
+                    Cancel
+                  </button>
+                )}
                 <button
                   type="button"
                   className="bg-blue-500 text-white p-2 rounded disabled:bg-gray-400 ml-2 p-2 h-10 w-10 flex justify-center items-center"
