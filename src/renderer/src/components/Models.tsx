@@ -9,8 +9,7 @@ import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 import { useModelStore } from '@renderer/stores/useModelsStore'
 
 export default function Models(): JSX.Element {
-  const [model, setModel] = React.useState<IModel | null>(null)
-  const { models, getModels } = useModelStore()
+  const { models, getModels, selectedModel, setSelectedModel } = useModelStore()
 
   const { showModal, hideModal } = useModalsContext()
 
@@ -38,7 +37,7 @@ export default function Models(): JSX.Element {
       hideModal(MODALS.LOADING_MODAL, 'Loading...')
       return
     }
-    setModel({
+    setSelectedModel({
       name: modelName,
       model: modelName,
       size: +jsonModel.size,
@@ -77,8 +76,8 @@ export default function Models(): JSX.Element {
           </option>
         ))}
       </select>
-      {model ? (
-        <ModelInfo model={model} />
+      {selectedModel ? (
+        <ModelInfo model={selectedModel} />
       ) : (
         <div className="text-center m-2 text-blue-700">No model selected</div>
       )}

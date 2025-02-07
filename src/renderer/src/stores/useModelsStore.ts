@@ -9,15 +9,18 @@ interface ModelState {
   isDownloading: boolean
   models: IModel[]
   modelName: string
+  selectedModel: IModel | null
   getModels: () => Promise<void>
   isModelExists: (name: string) => boolean
   setIsDownloading: (isDownloading: boolean) => void
   setModelName: (name: string) => void
+  setSelectedModel: (sModel: IModel) => void
 }
 
 export const useModelStore = create<ModelState>((set) => ({
   models: [],
   modelName: '',
+  selectedModel: null,
   isDownloading: false,
   getModels: async (): Promise<void> => {
     const json = (await fetchUrl(MODELS_GET_URL, {})) as IApiModel | string
@@ -32,5 +35,6 @@ export const useModelStore = create<ModelState>((set) => ({
     return useModelStore.getState().models.some((model: IModel) => model.name === name)
   },
   setIsDownloading: (isDownloading: boolean): void => set({ isDownloading }),
-  setModelName: (name: string): void => set({ modelName: name })
+  setModelName: (name: string): void => set({ modelName: name }),
+  setSelectedModel: (sModel: IModel): void => set({ selectedModel: sModel })
 }))
