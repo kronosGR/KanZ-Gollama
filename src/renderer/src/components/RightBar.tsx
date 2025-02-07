@@ -1,19 +1,21 @@
 import React, { useState } from 'react'
 import { UserChat } from './UserChat'
-import { CHAT } from '@renderer/utils/constants'
 import { useModelStore } from '@renderer/stores/useModelsStore'
-import { fetchUrl } from '@renderer/utils/fetchUrl'
-import { IFetchParams } from '@renderer/interfaces/IFetchParams'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 import { IChatRequest } from '@renderer/interfaces/IChatRequest'
 import { chatWithModel } from '@renderer/utils/chatWithModel'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
+import { useChatStore } from '@renderer/stores/useChatStore'
+import { Converstation } from './Conversation'
 
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
   const { showModal } = useModalsContext()
+  const { getMessages, messages, setCurrentMessage } = useChatStore()
 
-  const handleChatSend = async (message: string): Promise<void> => {
+  const abortController = new AbortController()
+
+  const handleChatSend = async (msg: string): Promise<void> => {
     if (!selectedModel?.name) {
       showModal(MODALS.NOTIFICATION_MODAL, {
         title: 'Error',
@@ -23,25 +25,45 @@ export default function RightBar(): JSX.Element {
       return
     }
 
-    const abortController = new AbortController()
+    setCurrentMessage({ role: 'user', content: msg })
+
+    if (!msg) {
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Error',
+        message: 'No message to send',
+        type: 'error'
+      })
+      return
+    }
 
     const request: IChatRequest = {
       model: selectedModel?.name,
       stream: true,
-      messages: [{ role: 'user', content: message }]
+      // messages: [{ role: currentMessage?.role, content: currentMessage?.content }]
+      messages: getMessages()
     }
 
+    console.log(request)
+
+    let resTXT = ''
     const result = await chatWithModel(
       request,
       (response: IChatResponse) => {
-        console.log('response', response)
+        resTXT += response.message.content
+        if (response.done) {
+          setCurrentMessage({ role: 'assistant', content: resTXT })
+          console.log('response', resTXT)
+        }
       },
       abortController.signal
     )
   }
 
   return (
-    <div className="h-screen w-full">
+    <div className="h-[90%] w-full">
+      <div className="border w-[98%] h-[78%] my-2">
+        <Converstation />
+      </div>
       <UserChat onSend={handleChatSend} />
     </div>
   )

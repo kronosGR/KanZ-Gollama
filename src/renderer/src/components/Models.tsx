@@ -18,6 +18,8 @@ export default function Models(): JSX.Element {
   }, [getModels])
 
   const handleModelChange = async (e): void => {
+    if (e.target.options[e.target.selectedIndex].value === 'none') return
+
     showModal(MODALS.LOADING_MODAL, { title: 'Loading...' })
     const modelName = e.target.options[e.target.selectedIndex].value
 
@@ -70,6 +72,7 @@ export default function Models(): JSX.Element {
         </p>
       </div>
       <select onChange={(e) => handleModelChange(e)}>
+        <option value="none">Select model</option>
         {models.map((model) => (
           <option key={model.model} value={model.model}>
             {model.name}
