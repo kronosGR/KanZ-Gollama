@@ -11,7 +11,8 @@ import { Converstation } from './Conversation'
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
   const { showModal } = useModalsContext()
-  const { getMessages, messages, setCurrentMessage } = useChatStore()
+  const { getMessages, setCurrentMessage } = useChatStore()
+  const [resText, setRestText] = useState('')
 
   const abortController = new AbortController()
 
@@ -50,6 +51,8 @@ export default function RightBar(): JSX.Element {
       request,
       (response: IChatResponse) => {
         resTXT += response.message.content
+        console.log(resTXT)
+        setRestText(resTXT)
         if (response.done) {
           setCurrentMessage({ role: 'assistant', content: resTXT })
           console.log('response', resTXT)
