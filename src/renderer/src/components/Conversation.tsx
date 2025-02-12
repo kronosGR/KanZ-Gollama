@@ -8,19 +8,16 @@ export const Converstation: React.FC = () => {
     return (
       <>
         {getMessages().map((msg, i) => {
-          if (i < length - 1) {
-            return (
-              <div className="mb-2" key={i}>
-                {msg.content}
-              </div>
-            )
-          }
+          if (i === length - 1 && msg.role === 'assistant') return
           return (
             <div className="mb-2" key={i}>
-              {currentMessage?.content}
+              {msg.content}
             </div>
           )
         })}
+        <div className="mb-2" key={length}>
+          {currentMessage?.content}
+        </div>
       </>
     )
   }

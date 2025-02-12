@@ -44,8 +44,6 @@ export default function RightBar(): JSX.Element {
       messages: getMessages()
     }
 
-    console.log(request)
-
     let resTXT = ''
     const result = await chatWithModel(
       request,
