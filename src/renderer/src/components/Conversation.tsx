@@ -1,4 +1,5 @@
 import { useChatStore } from '@renderer/stores/useChatStore'
+import { ChatItem } from './ChatItem'
 
 export const Converstation: React.FC = () => {
   const { getMessages, currentMessage } = useChatStore()
@@ -6,19 +7,13 @@ export const Converstation: React.FC = () => {
   const showMessages = (): JSX.Element => {
     const length = getMessages().length
     return (
-      <>
+      <div className="p-1">
         {getMessages().map((msg, i) => {
           if (i === length - 1 && msg.role === 'assistant') return
-          return (
-            <div className="mb-2" key={i}>
-              {msg.content}
-            </div>
-          )
+          return <ChatItem key={i} message={msg} />
         })}
-        <div className="mb-2" key={length}>
-          {currentMessage?.content}
-        </div>
-      </>
+        <ChatItem key={length} message={currentMessage} />
+      </div>
     )
   }
 
