@@ -7,7 +7,8 @@ interface ChatState {
   currentMessage: IMessage | null
   setIsWorking: (state: boolean) => void
   getMessages: () => IMessage[]
-  setCurrentMessage: (message: IMessage) => void
+  setCurrentMessage: (message: IMessage, isDone: boolean) => void
+  setMessage: (message: IMessage) => void
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -18,12 +19,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
   getMessages: (): IMessage[] => {
     return get().messages
   },
-  setCurrentMessage: (message: IMessage): void => {
+  setCurrentMessage: (message: IMessage, isDone: boolean): void => {
+    set({ currentMessage: message })
+    if (isDone) {
+      set((state) => {
+        const updatedMessages = [...state.messages, state.currentMessage]
+        console.log(updatedMessages)
+        return {
+          messages: updatedMessages
+        }
+      })
+    }
+  },
+  setMessage: (message: IMessage): void => {
     set((state) => {
       const updatedMessages = [...state.messages, message]
       console.log(updatedMessages)
       return {
-        currentMessage: message,
+        //currentMessage: message,
         messages: updatedMessages
       }
     })

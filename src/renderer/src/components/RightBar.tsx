@@ -11,7 +11,7 @@ import { Converstation } from './Conversation'
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
   const { showModal } = useModalsContext()
-  const { getMessages, setCurrentMessage } = useChatStore()
+  const { getMessages, setMessage, setCurrentMessage } = useChatStore()
   const [resText, setRestText] = useState('')
 
   const abortController = new AbortController()
@@ -26,7 +26,7 @@ export default function RightBar(): JSX.Element {
       return
     }
 
-    setCurrentMessage({ role: 'user', content: msg })
+    setMessage({ role: 'user', content: msg })
 
     if (!msg) {
       showModal(MODALS.NOTIFICATION_MODAL, {
@@ -51,12 +51,11 @@ export default function RightBar(): JSX.Element {
       request,
       (response: IChatResponse) => {
         resTXT += response.message.content
-        console.log(resTXT)
         setRestText(resTXT)
-        if (response.done) {
-          setCurrentMessage({ role: 'assistant', content: resTXT })
-          console.log('response', resTXT)
-        }
+        setCurrentMessage({ role: 'assistant', content: resTXT }, response.done)
+        // if (response.done) {
+        //   setMessage({ role: 'assistant', content: resTXT })
+        // }
       },
       abortController.signal
     )
@@ -64,7 +63,7 @@ export default function RightBar(): JSX.Element {
 
   return (
     <div className="h-[90%] w-full">
-      <div className="border w-[98%] h-[78%] my-2">
+      <div className="border w-[98%] h-[78%] my-2 overflow-auto">
         <Converstation />
       </div>
       <UserChat onSend={handleChatSend} />
