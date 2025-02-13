@@ -20,11 +20,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
     return get().messages
   },
   setCurrentMessage: (message: IMessage, isDone: boolean): void => {
+    set({ currentMessage: null })
     set({ currentMessage: message })
     if (isDone) {
       set((state) => {
         const updatedMessages = [...state.messages, state.currentMessage]
-        console.log(updatedMessages)
+        // console.log(updatedMessages)
         return {
           messages: updatedMessages
         }

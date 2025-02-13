@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { UserChat } from './UserChat'
 import { useModelStore } from '@renderer/stores/useModelsStore'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
@@ -7,16 +7,26 @@ import { chatWithModel } from '@renderer/utils/chatWithModel'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { Converstation } from './Conversation'
+import { title } from 'process'
 
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
   const { showModal } = useModalsContext()
-  const { getMessages, setMessage, setCurrentMessage } = useChatStore()
+  const { getMessages, setMessage, setCurrentMessage, setIsWorking, messages } = useChatStore()
   const [resText, setRestText] = useState('')
+  const endChatRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (endChatRef.current) {
+      endChatRef.current.scrollTop = endChatRef.current.scrollHeight
+    }
+  }, [messages])
 
   const abortController = new AbortController()
 
   const handleChatSend = async (msg: string): Promise<void> => {
+    setIsWorking(true)
+
     if (!selectedModel?.name) {
       showModal(MODALS.NOTIFICATION_MODAL, {
         title: 'Error',
@@ -57,12 +67,15 @@ export default function RightBar(): JSX.Element {
       },
       abortController.signal
     )
+
+    setIsWorking(false)
   }
 
   return (
     <div className="h-[90%] w-full">
       <div className="border w-[98%] h-[78%] my-2 overflow-auto">
         <Converstation />
+        <div ref={endChatRef}></div>
       </div>
       <UserChat onSend={handleChatSend} />
     </div>

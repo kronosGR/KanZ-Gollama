@@ -1,8 +1,9 @@
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { ChatItem } from './ChatItem'
+import { PulseLoader } from 'react-spinners'
 
 export const Converstation: React.FC = () => {
-  const { getMessages, currentMessage } = useChatStore()
+  const { getMessages, currentMessage, isWorking } = useChatStore()
 
   const showMessages = (): JSX.Element => {
     const length = getMessages().length
@@ -14,6 +15,11 @@ export const Converstation: React.FC = () => {
         })}
         {currentMessage && currentMessage?.content.length > 0 && (
           <ChatItem key={length} message={currentMessage} />
+        )}
+        {isWorking && (
+          <div className="flex w-[100%] justify-center items-center">
+            <PulseLoader color="#34992f" />
+          </div>
         )}
       </div>
     )
