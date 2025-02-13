@@ -10,12 +10,19 @@ interface IProps {
 
 export const ChatItem: React.FC<IProps> = ({ message }) => {
   const location = message?.role === 'assistant' ? 'justify-start' : 'justify-end'
-  const color = message?.role === 'assistant' ? ' bg-red-100' : 'j bg-green-200'
+  const bgColor = message?.role === 'assistant' ? ' bg-blue-200' : 'j bg-green-200'
+  const color = message?.role === 'assistant' ? ' text-blue-400' : 'j text-green-400'
   return (
     <div className="flex w-[100%] mb-2">
       <div className={`flex w-[100%] items-center ${location}`}>
-        <div>{message?.role === 'assistant' ? <FaBrain /> : <HiMiniUserGroup />}</div>
-        <div className={`w-4/6 border p-2 ${color}`}>{message?.content}</div>
+        <div>
+          {message?.role === 'assistant' ? (
+            <FaBrain className={`text-4xl mr-1 ${color}`} />
+          ) : (
+            <HiMiniUserGroup className={`text-4xl mr-1 ${color}`} />
+          )}
+        </div>
+        <div className={`w-4/6 border p-2 ${bgColor}`}>{message?.content}</div>
       </div>
     </div>
   )

@@ -12,7 +12,9 @@ export const Converstation: React.FC = () => {
           if (i === length - 1 && msg.role === 'assistant') return
           return <ChatItem key={i} message={msg} />
         })}
-        <ChatItem key={length} message={currentMessage} />
+        {currentMessage && currentMessage?.content.length > 0 && (
+          <ChatItem key={length} message={currentMessage} />
+        )}
       </div>
     )
   }
