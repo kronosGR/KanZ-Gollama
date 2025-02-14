@@ -18,7 +18,7 @@ export default function RightBar(): JSX.Element {
 
   useEffect(() => {
     if (endChatRef.current) {
-      endChatRef.current.scrollTop = endChatRef.current.scrollHeight
+      endChatRef.current.scrollIntoView()
     }
   }, [messages])
 
