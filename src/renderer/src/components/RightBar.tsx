@@ -7,12 +7,18 @@ import { chatWithModel } from '@renderer/utils/chatWithModel'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { Converstation } from './Conversation'
-import { title } from 'process'
 
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
   const { showModal } = useModalsContext()
-  const { getMessages, setMessage, setCurrentMessage, setIsWorking, messages } = useChatStore()
+  const {
+    getMessages,
+    resetCurrentMessage,
+    setMessage,
+    setCurrentMessage,
+    setIsWorking,
+    messages
+  } = useChatStore()
   const [resText, setRestText] = useState('')
   const endChatRef = useRef<HTMLDivElement>(null)
 
@@ -26,6 +32,7 @@ export default function RightBar(): JSX.Element {
 
   const handleChatSend = async (msg: string): Promise<void> => {
     setIsWorking(true)
+    resetCurrentMessage()
 
     if (!selectedModel?.name) {
       showModal(MODALS.NOTIFICATION_MODAL, {
@@ -75,7 +82,6 @@ export default function RightBar(): JSX.Element {
     <div className="h-[90%] w-full">
       <div className="border w-[98%] h-[78%] my-2 overflow-auto">
         <Converstation />
-        <div ref={endChatRef}></div>
       </div>
       <UserChat onSend={handleChatSend} />
     </div>

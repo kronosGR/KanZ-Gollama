@@ -8,6 +8,7 @@ interface ChatState {
   setIsWorking: (state: boolean) => void
   getMessages: () => IMessage[]
   setCurrentMessage: (message: IMessage, isDone: boolean) => void
+  resetCurrentMessage: () => void
   setMessage: (message: IMessage) => void
 }
 
@@ -19,7 +20,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   getMessages: (): IMessage[] => {
     return get().messages
   },
-  setCurrentMessage: (message: IMessage, isDone: boolean): void => {
+  resetCurrentMessage: (): void => set({ currentMessage: null }),
+  setCurrentMessage: (message: IMessage | null, isDone: boolean): void => {
     set({ currentMessage: null })
     set({ currentMessage: message })
     if (isDone) {

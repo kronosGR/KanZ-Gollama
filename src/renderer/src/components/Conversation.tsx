@@ -1,9 +1,18 @@
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { ChatItem } from './ChatItem'
 import { PulseLoader } from 'react-spinners'
+import { useEffect, useRef } from 'react'
 
 export const Converstation: React.FC = () => {
-  const { getMessages, currentMessage, isWorking } = useChatStore()
+  const { getMessages, currentMessage, isWorking, messages } = useChatStore()
+
+  const endChatRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (endChatRef.current) {
+      endChatRef.current.scrollIntoView()
+    }
+  }, [currentMessage])
 
   const showMessages = (): JSX.Element => {
     const length = getMessages().length
@@ -14,7 +23,10 @@ export const Converstation: React.FC = () => {
           return <ChatItem key={i} message={msg} />
         })}
         {currentMessage && currentMessage?.content.length > 0 && (
-          <ChatItem key={length} message={currentMessage} />
+          <>
+            <ChatItem key={length} message={currentMessage} />
+            <div ref={endChatRef}></div>
+          </>
         )}
         {isWorking && (
           <div className="flex w-[100%] justify-center items-center">
@@ -25,5 +37,5 @@ export const Converstation: React.FC = () => {
     )
   }
 
-  return <div className="bg-slate-100 w-full h-full">{showMessages()}</div>
+  return <div className="bg-slate-100 w-full h-full  overflow-auto">{showMessages()}</div>
 }
