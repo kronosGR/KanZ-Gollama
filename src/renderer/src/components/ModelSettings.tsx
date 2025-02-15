@@ -54,6 +54,9 @@ export const ModelSettings: React.FC = () => {
     const abortController = new AbortController()
     abortControllerRef.current = abortController
 
+    setProgress(0)
+    setProgressStatus('')
+
     setIsDownloading(true)
     const request: IPullRequest = {
       model: modelName,
