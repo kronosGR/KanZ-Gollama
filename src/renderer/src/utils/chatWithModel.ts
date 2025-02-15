@@ -7,7 +7,7 @@ export const chatWithModel = async (
   request: IChatRequest,
   onProgress: (response: IChatResponse) => void,
   signal: AbortSignal
-): Promise<void> => {
+): Promise<void | { message: string }> => {
   const host = CHAT
 
   if (request.stream) {
@@ -26,12 +26,18 @@ export const chatWithModel = async (
 
       let progress: IChatResponse
       let message: IMessage
+      let shouldStop = false
+      let error = ''
 
-      while (!result.done) {
+      while (!result.done && !shouldStop) {
         const resMsg = new TextDecoder().decode(result?.value)
         const msg = JSON.parse(resMsg) as IChatResponse
 
-        // console.log(msg.message.content, msg.done)
+        if ('error' in msg) {
+          error = resMsg.error || 'Failed to chat'
+          shouldStop = true
+          console.log('aaa', error)
+        }
 
         message = { role: msg.message.role, content: msg.message.content }
         progress = {
@@ -61,7 +67,11 @@ export const chatWithModel = async (
         result = await reader?.read()
       }
     } catch (e) {
-      console.log(e)
+      if ((e as DOMException).name === 'AbortError') {
+        return { message: 'Answer aborted' }
+      } else {
+        throw e
+      }
     }
   }
 }

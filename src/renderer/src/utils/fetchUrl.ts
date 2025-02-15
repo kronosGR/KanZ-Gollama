@@ -7,8 +7,7 @@ export const fetchUrl = async (url: string, options: IFetchParams): Promise<Resp
     headers: {
       ...options.headers,
       'Content-Type': 'application/json'
-    },
-    mode: 'no-cors'
+    }
   }
 
   const response = await fetch(url, custOptions)

@@ -17,10 +17,12 @@ export default function RightBar(): JSX.Element {
     setMessage,
     setCurrentMessage,
     setIsWorking,
+    isWorking,
     messages
   } = useChatStore()
   const [resText, setRestText] = useState('')
   const endChatRef = useRef<HTMLDivElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (endChatRef.current) {
@@ -28,9 +30,17 @@ export default function RightBar(): JSX.Element {
     }
   }, [messages])
 
-  const abortController = new AbortController()
+  const handleAbort = (): void => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      setIsWorking(false)
+    }
+  }
 
   const handleChatSend = async (msg: string): Promise<void> => {
+    const abortController = new AbortController()
+    abortControllerRef.current = abortController
+
     setIsWorking(true)
     resetCurrentMessage()
 
@@ -40,6 +50,8 @@ export default function RightBar(): JSX.Element {
         message: 'No model selected',
         type: 'error'
       })
+      setIsWorking(false)
+      resetCurrentMessage()
       return
     }
 
@@ -51,6 +63,7 @@ export default function RightBar(): JSX.Element {
         message: 'No message to send',
         type: 'error'
       })
+      setIsWorking(false)
       return
     }
 
@@ -65,6 +78,15 @@ export default function RightBar(): JSX.Element {
     const result = await chatWithModel(
       request,
       (response: IChatResponse) => {
+        if (response.status === 'Failed to chat') {
+          console.log(response)
+          showModal(MODALS.NOTIFICATION_MODAL, {
+            title: 'Error',
+            message: response.status,
+            type: 'error'
+          })
+          setIsWorking(false)
+        }
         resTXT += response.message.content
         setRestText(resTXT)
         setCurrentMessage({ role: 'assistant', content: resTXT }, response.done)
@@ -75,6 +97,17 @@ export default function RightBar(): JSX.Element {
       abortController.signal
     )
 
+    if (result && 'message' in result) {
+      showModal(MODALS.NOTIFICATION_MODAL, {
+        title: 'Error',
+        message: result.message,
+        type: 'error'
+      })
+      setCurrentMessage({ role: 'assistant', content: resTXT }, true)
+      setIsWorking(false)
+      return
+    }
+
     setIsWorking(false)
   }
 
@@ -83,7 +116,7 @@ export default function RightBar(): JSX.Element {
       <div className="border w-[98%] h-[78%] my-2 overflow-auto">
         <Converstation />
       </div>
-      <UserChat onSend={handleChatSend} />
+      <UserChat onSend={handleChatSend} onHandleAbort={handleAbort} />
     </div>
   )
 }

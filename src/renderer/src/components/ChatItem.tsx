@@ -16,13 +16,10 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
     <div className="flex w-[100%] mb-2">
       <div className={`flex w-[100%] items-center ${location}`}>
         <div>
-          {message?.role === 'assistant' ? (
-            <FaBrain className={`text-4xl mr-1 ${color}`} />
-          ) : (
-            <HiMiniUserGroup className={`text-4xl mr-1 ${color}`} />
-          )}
+          {message?.role === 'assistant' && <FaBrain className={`text-4xl mr-1 ${color}`} />}
         </div>
-        <div className={`w-4/6 border p-2 ${bgColor}`}>{message?.content}</div>
+        <div className={`w-[80%] border p-2 ${bgColor}`}>{message?.content}</div>
+        {message?.role === 'user' && <HiMiniUserGroup className={`text-4xl mr-1 ${color}`} />}
       </div>
     </div>
   )

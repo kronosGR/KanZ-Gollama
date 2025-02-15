@@ -3,9 +3,10 @@ import React, { useEffect, useRef, useState } from 'react'
 
 interface IProps {
   onSend: (message: string) => void
+  onHandleAbort: () => void
 }
 
-export const UserChat: React.FC<IProps> = ({ onSend }) => {
+export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
   const [message, setMessage] = useState<string>()
   const textAreaRef = useRef<HTMLAreaElement>(null)
   const { isWorking } = useChatStore()
@@ -43,18 +44,29 @@ export const UserChat: React.FC<IProps> = ({ onSend }) => {
         }}
         onKeyDown={onEnterPress}
       ></textarea>
-      <button
-        type="button"
-        disabled={isWorking}
-        className=" mt-2 bg-blue-500 text-white p-2 rounded disabled:bg-gray-400 px-6"
-        onClick={() => {
-          onSend(message)
-          setMessage('')
-          focusTextArea()
-        }}
-      >
-        Send (Ctrl + Enter)
-      </button>
+      <div className="flex">
+        <button
+          type="button"
+          disabled={isWorking}
+          className=" m-2 bg-blue-500 text-white p-2 rounded disabled:bg-gray-400 px-6"
+          onClick={() => {
+            onSend(message)
+            setMessage('')
+            focusTextArea()
+          }}
+        >
+          Send (Ctrl + Enter)
+        </button>
+        {isWorking && (
+          <button
+            type="button"
+            className="m-2 bg-red-500 text-white p-2 rounded "
+            onClick={onHandleAbort}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </div>
   )
 }
