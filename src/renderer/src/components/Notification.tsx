@@ -6,9 +6,10 @@ export const Notification: React.FC = (): ReactNode => {
   const { title, message, type } = getInfoModal(MODALS.NOTIFICATION_MODAL).modalProps
 
   useEffect(() => {
-    setTimeout(() => {
-      hideModal(MODALS.NOTIFICATION_MODAL, 'Model deleted')
-    }, 3000)
+    const timer = setTimeout(() => {
+      hideModal(MODALS.NOTIFICATION_MODAL, title || '')
+    }, 2000)
+    return (): void => clearTimeout(timer)
   }, [])
 
   return (

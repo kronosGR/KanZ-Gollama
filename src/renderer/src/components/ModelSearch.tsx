@@ -66,7 +66,7 @@ export const ModelSearch: React.FC = () => {
     const selectedModel = selectRef.current?.value
     if (selectedModel) {
       setModelName(selectedModel)
-      hideModal(MODALS.MODEL_SEARCH, 'Model Search')
+      hideModal(MODALS.MODEL_SEARCH, title || '')
     }
   }
 
@@ -80,7 +80,7 @@ export const ModelSearch: React.FC = () => {
             className="font-extrabold"
             type="button"
             onClick={() => {
-              hideModal(MODALS.MODEL_SEARCH, 'Model Search')
+              hideModal(MODALS.MODEL_SEARCH, title || '')
             }}
           >
             &#9587;

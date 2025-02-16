@@ -2,7 +2,7 @@ import { Loading } from '@renderer/components/Loading'
 import { ModelSearch } from '@renderer/components/ModelSearch'
 import { ModelSettings } from '@renderer/components/ModelSettings'
 import { Notification } from '@renderer/components/Notification'
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 export const MODALS = {
   MODEL_SETTINGS_MODAL: 'MODEL_SETTINGS_MODAL',
@@ -34,81 +34,56 @@ interface ModalStore {
   modals: Modal[]
 }
 
-type ContextType = {
+interface ContextType {
   showModal: (modalType: string, modalProps: ModalProps) => void
-  hideModal: (modalType: string, title: string) => void
+  hideModal: (modalType: string) => void
   getInfoModal: (modalType: string) => { modalType: string; modalProps: ModalProps }
-  store: ModalStore
-}
-
-const initialStateStore: ModalStore = {
-  modals: [
-    {
-      modalType: null,
-      modalProps: {}
-    }
-  ]
+  store: ModalStore | null
 }
 
 const initialState: ContextType = {
-  showModal: () => {},
+  showModal: () => '',
   hideModal: () => {},
-  getInfoModal: (modalType: string) => ({ modalType, modalProps: {} }),
-  store: initialStateStore
+  getInfoModal: () => ({ modalType: '', modalProps: {} }),
+  store: null
 }
 
 const ModalsContext = createContext<ContextType>(initialState)
 export const useModalsContext = (): ContextType => useContext(ModalsContext)
 
 export const Modals: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [store, setStore] = useState(initialStateStore)
-  const modals = store.modals
-
-  // useEffect(() => {
-  //   console.log(store)
-  // }, [store])
+  const [store, setStore] = useState<ModalStore>({ modals: [] })
+  const modals = store?.modals
 
   const showModal = (modalType: string, modalProps: ModalProps): void => {
-    const newModals = [
-      ...store.modals,
-      {
-        modalType,
-        modalProps
-      }
-    ]
-    // console.log('---show', newModals)
-    setStore({
-      ...store,
-      modals: newModals
-    })
+    const newModal = { modalType, modalProps }
+    setStore((prev) => ({
+      ...prev,
+      modals: [...prev.modals, newModal]
+    }))
   }
 
   const hideModal = (modalType: string, title: string): void => {
-    if (!modalType) return
-    const newModals = store.modals.filter(
-      (modal) => modal.modalType !== modalType && modal.modalProps.title !== title
-    )
-    // console.log('---hide', newModals)
-    setStore({
-      ...store,
-      modals: newModals
-    })
+    setStore((prev) => ({
+      ...prev,
+      modals: prev.modals.filter(
+        (modal) => modal.modalType !== modalType || modal.modalProps.title !== title
+      )
+    }))
   }
 
   const getInfoModal = (modalType: string): Modal => {
-    if (!modalType) return { modalType, modalProps: {} }
-    const tmpModal = store.modals.filter((modal) => modal.modalType === modalType)
-    return tmpModal[0]
+    const tmpModal = modals.find((modal) => modal.modalType === modalType)
+    return tmpModal || { modalType: '', modalProps: {} }
   }
 
   const showModals = (): ReactNode => {
-    if (modals.length === 0) return null
+    if (!modals?.length) return null
     return (
       <>
         {modals.map((modal, index) => {
           const ModalTmpComp = MODAL_COMPONENTS[modal.modalType as string]
           if (!ModalTmpComp) return null
-          // console.log('---show modals', index, ' ', modal.modalType)
           return <ModalTmpComp key={index} {...modal.modalProps} />
         })}
       </>
