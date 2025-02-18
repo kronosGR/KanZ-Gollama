@@ -3,6 +3,7 @@ import { IModel } from '@renderer/interfaces/IModel'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { numberFormat } from '@renderer/utils/numberFormat'
 import React, { useEffect, useState } from 'react'
+import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa'
 
 interface ModelInfoProps {
   model: IModel
@@ -11,14 +12,33 @@ interface ModelInfoProps {
 const ModelInfo: React.FC<ModelInfoProps> = ({ model }) => {
   const { getAIMessages, messages, stats } = useChatStore()
   const [curAIMsg, setCurAIMsg] = useState<IMessage | null>(null)
+  const [curMsgIdx, setCurMsgIdx] = useState<number>(0)
+
   useEffect(() => {
-    setCurAIMsg(getAIMessages()[getAIMessages().length - 1])
+    setCurMsgIdx(getAIMessages().length - 1)
+    setCurAIMsg(getAIMessages()[curMsgIdx])
   }, [messages])
+
+  const handleNextStat = (): void => {
+    setCurMsgIdx((prev) => {
+      const newIdx = prev === getAIMessages().length - 1 ? prev : prev + 1
+      setCurAIMsg(getAIMessages()[newIdx])
+      return newIdx
+    })
+  }
+
+  const handlePrevStat = (): void => {
+    setCurMsgIdx((prev) => {
+      const newIdx = prev === 0 ? prev : prev - 1
+      setCurAIMsg(getAIMessages()[newIdx])
+      return newIdx
+    })
+  }
 
   return (
     <>
       <div className="border mt-2 p-2 text-sm">
-        <h3 className="font-bold border-b-2 border-red-700">Model Information</h3>
+        <h3 className="font-bold ">Model Information</h3>
         <div className="flex">
           <p className="me-2 ms-2 font-semibold">Name:</p>
           <p>{model.name}</p>
@@ -46,7 +66,21 @@ const ModelInfo: React.FC<ModelInfoProps> = ({ model }) => {
       </div>
       {getAIMessages().length > 0 && stats && (
         <div className="border mt-2 p-2 text-sm">
-          <h3 className="font-bold border-b-2 border-red-700 ">Response Statistics</h3>
+          <div className="flex border-b-2 border-red-700 justify-between">
+            <h3 className="font-bold ">Response Statistics</h3>
+            <div className="flex">
+              <FaChevronCircleLeft
+                className={`me-1 ${curMsgIdx === 0 ? 'cursor-default' : ' cursor-pointer'}`}
+                style={{ color: curMsgIdx === 0 ? 'gray' : 'blue' }}
+                onClick={handlePrevStat}
+              />
+              <FaChevronCircleRight
+                style={{ color: curMsgIdx === getAIMessages().length - 1 ? 'gray' : 'blue' }}
+                onClick={handleNextStat}
+                className={`${curMsgIdx === getAIMessages().length - 1 ? 'cursor-default' : ' cursor-pointer'}`}
+              />
+            </div>
+          </div>
           <div className="flex  text-xs">
             <p className="me-2 ms-2 font-semibold">Total Duration:</p>
             <p>{numberFormat(curAIMsg?.total_duration ?? 0)} secs</p>
