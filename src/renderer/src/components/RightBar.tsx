@@ -7,6 +7,8 @@ import { chatWithModel } from '@renderer/utils/chatWithModel'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { Converstation } from './Conversation'
+import { numberFormat } from '@renderer/utils/numberFormat'
+import { IMessage } from '../interfaces/IMessage'
 
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
@@ -55,9 +57,7 @@ export default function RightBar(): JSX.Element {
       return
     }
 
-    setMessage({ role: 'user', content: msg })
-
-    if (!msg) {
+    if (!msg && msg.length < 1) {
       showModal(MODALS.NOTIFICATION_MODAL, {
         title: 'Error',
         message: 'No message to send',
@@ -67,6 +67,7 @@ export default function RightBar(): JSX.Element {
       return
     }
 
+    setMessage({ role: 'user', content: msg })
     const request: IChatRequest = {
       model: selectedModel?.name,
       stream: true,
@@ -87,9 +88,22 @@ export default function RightBar(): JSX.Element {
           })
           setIsWorking(false)
         }
+
         resTXT += response.message.content
+        const tmpMsg: IMessage = {
+          role: 'assistant',
+          content: resTXT
+        }
         setRestText(resTXT)
-        setCurrentMessage({ role: 'assistant', content: resTXT }, response.done)
+        if (response.done) {
+          tmpMsg.eval_count = response.eval_count
+          tmpMsg.eval_duration = response.eval_duration
+          tmpMsg.load_duration = response.load_duration
+          tmpMsg.total_duration = response.total_duration
+          tmpMsg.prompt_eval_count = response.eval_count
+          tmpMsg.prompt_eval_duration = response.eval_duration
+        }
+        setCurrentMessage(tmpMsg, response.done)
         // if (response.done) {
         //   setMessage({ role: 'assistant', content: resTXT })
         // }

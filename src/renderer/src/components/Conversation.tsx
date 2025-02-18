@@ -25,12 +25,12 @@ export const Converstation: React.FC = () => {
         {currentMessage && currentMessage?.content.length > 0 && (
           <>
             <ChatItem key={length} message={currentMessage} />
-            <div ref={endChatRef}></div>
           </>
         )}
         {isWorking && (
           <div className="flex w-[100%] justify-center items-center">
             <PulseLoader color="#34992f" />
+            <div ref={endChatRef}></div>
           </div>
         )}
       </div>

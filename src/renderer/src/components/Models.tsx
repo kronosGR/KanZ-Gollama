@@ -1,17 +1,19 @@
 import React, { useEffect } from 'react'
 import { fetchUrl } from '../utils/fetchUrl'
-import { IModel } from '@renderer/interfaces/IModel'
+import { IoMdStats } from 'react-icons/io'
 import { IApiModel } from '@renderer/interfaces/IApiModel'
 import { MODELS_GET_BY_NAME } from '@renderer/utils/constants'
 import ModelInfo from './ModelInfo'
 import { IoSettings } from 'react-icons/io5'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 import { useModelStore } from '@renderer/stores/useModelsStore'
+import { useChatStore } from '@renderer/stores/useChatStore'
 
 export default function Models(): JSX.Element {
   const { models, getModels, selectedModel, setSelectedModel } = useModelStore()
 
   const { showModal, hideModal } = useModalsContext()
+  const { setStats, stats } = useChatStore()
 
   useEffect(() => {
     getModels()
@@ -68,6 +70,12 @@ export default function Models(): JSX.Element {
             onClick={() => showModal(MODALS.MODEL_SETTINGS_MODAL, { title: 'Model Settings' })}
           >
             <IoSettings />
+          </button>
+          <button
+            className={stats ? 'border-b-2 border-green-400' : ''}
+            onClick={() => setStats(!stats)}
+          >
+            <IoMdStats />
           </button>
         </p>
       </div>

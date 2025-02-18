@@ -5,20 +5,27 @@ interface ChatState {
   isWorking: boolean
   messages: IMessage[]
   currentMessage: IMessage | null
+  stats: boolean
   setIsWorking: (state: boolean) => void
   getMessages: () => IMessage[]
+  getAIMessages: () => IMessage[]
   setCurrentMessage: (message: IMessage, isDone: boolean) => void
   resetCurrentMessage: () => void
   setMessage: (message: IMessage) => void
+  setStats: (status: boolean) => void
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
   isWorking: false,
   messages: [],
   currentMessage: null,
+  stats: false,
   setIsWorking: (state: boolean): void => set({ isWorking: state }),
   getMessages: (): IMessage[] => {
     return get().messages
+  },
+  getAIMessages: (): IMessage[] => {
+    return get().messages.filter((message: IMessage) => message.role === 'assistant')
   },
   resetCurrentMessage: (): void => set({ currentMessage: null }),
   setCurrentMessage: (message: IMessage | null, isDone: boolean): void => {
@@ -41,5 +48,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         messages: updatedMessages
       }
     })
+  },
+  setStats: (status: boolean): void => {
+    set({ stats: status })
   }
 }))
