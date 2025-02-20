@@ -15,7 +15,7 @@ const ModelInfo: React.FC<ModelInfoProps> = ({ model }) => {
   const [curMsgIdx, setCurMsgIdx] = useState<number>(0)
 
   useEffect(() => {
-    setCurMsgIdx(getAIMessages().length - 1)
+    setCurMsgIdx(getAIMessages().length === 0 ? 0 : getAIMessages().length - 1)
     setCurAIMsg(getAIMessages()[curMsgIdx])
   }, [messages])
 

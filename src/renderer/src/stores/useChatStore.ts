@@ -9,6 +9,7 @@ interface ChatState {
   setIsWorking: (state: boolean) => void
   getMessages: () => IMessage[]
   getAIMessages: () => IMessage[]
+  getUserMessages: () => IMessage[]
   setCurrentMessage: (message: IMessage, isDone: boolean) => void
   resetCurrentMessage: () => void
   setMessage: (message: IMessage) => void
@@ -26,6 +27,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
   getAIMessages: (): IMessage[] => {
     return get().messages.filter((message: IMessage) => message.role === 'assistant')
+  },
+  getUserMessages: (): IMessage[] => {
+    return [
+      ...get().messages.filter((message: IMessage) => message.role === 'user'),
+      { role: 'user', content: '' }
+    ]
   },
   resetCurrentMessage: (): void => set({ currentMessage: null }),
   setCurrentMessage: (message: IMessage | null, isDone: boolean): void => {
