@@ -119,12 +119,14 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
         onKeyDown={onEnterPress}
       ></textarea>
       <div className="flex items-center">
-        <FaChevronCircleUp
-          title="Ctrl + ⇧"
-          className={`me-1 text-4xl ${curMsgIdx === 0 ? 'cursor-default' : ' cursor-pointer'}`}
-          style={{ color: curMsgIdx === 0 ? 'gray' : 'blue' }}
-          onClick={curMsgIdx === 0 ? undefined : handlePrevMsg}
-        />
+        {!isWorking && (
+          <FaChevronCircleUp
+            title="Ctrl + ⇧"
+            className={`me-1 text-4xl ${curMsgIdx === 0 ? 'cursor-default' : ' cursor-pointer'}`}
+            style={{ color: curMsgIdx === 0 ? 'gray' : 'blue' }}
+            onClick={curMsgIdx === 0 ? undefined : handlePrevMsg}
+          />
+        )}
         <button
           type="button"
           title="Ctrl + Enter"
@@ -148,31 +150,33 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
             Cancel
           </button>
         )}
-        <FaChevronCircleDown
-          title="Ctrl + ⇩"
-          style={{
-            color:
-              getUserMessages().length === 0
-                ? 'gray'
-                : curMsgIdx === getUserMessages().length - 1
+        {!isWorking && (
+          <FaChevronCircleDown
+            title="Ctrl + ⇩"
+            style={{
+              color:
+                getUserMessages().length === 0
                   ? 'gray'
-                  : 'blue'
-          }}
-          onClick={
-            getUserMessages().length === 0
-              ? undefined
-              : curMsgIdx === getUserMessages().length - 1
+                  : curMsgIdx === getUserMessages().length - 1
+                    ? 'gray'
+                    : 'blue'
+            }}
+            onClick={
+              getUserMessages().length === 0
                 ? undefined
-                : handleNextMsg
-          }
-          className={`text-4xl ${
-            getUserMessages().length === 0
-              ? undefined
-              : curMsgIdx === getUserMessages().length - 1
-                ? 'cursor-default'
-                : ' cursor-pointer'
-          }`}
-        />
+                : curMsgIdx === getUserMessages().length - 1
+                  ? undefined
+                  : handleNextMsg
+            }
+            className={`text-4xl ${
+              getUserMessages().length === 0
+                ? undefined
+                : curMsgIdx === getUserMessages().length - 1
+                  ? 'cursor-default'
+                  : ' cursor-pointer'
+            }`}
+          />
+        )}
       </div>
     </div>
   )
