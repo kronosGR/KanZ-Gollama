@@ -70,7 +70,7 @@ export const chatWithModel = async (
       if ((e as DOMException).name === 'AbortError') {
         return { message: 'Answer aborted' }
       } else {
-        throw e
+        return { message: 'Issues with the model' }
       }
     }
   }
