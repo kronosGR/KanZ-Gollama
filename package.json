@@ -26,8 +26,8 @@
     "cheerio": "^1.0.0",
     "electron-updater": "^6.1.7",
     "react-icons": "^5.4.0",
+    "react-markdown": "^10.0.0",
     "react-spinners": "^0.15.0",
-    "showdown": "^2.1.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
