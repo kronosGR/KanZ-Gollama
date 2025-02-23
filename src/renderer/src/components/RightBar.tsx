@@ -6,7 +6,7 @@ import { IChatRequest } from '@renderer/interfaces/IChatRequest'
 import { chatWithModel } from '@renderer/utils/chatWithModel'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
-import { Converstation } from './Conversation'
+import { Conversation } from './Conversation'
 import { numberFormat } from '@renderer/utils/numberFormat'
 import { IMessage } from '../interfaces/IMessage'
 
@@ -128,7 +128,7 @@ export default function RightBar(): JSX.Element {
   return (
     <div className="h-[90%] w-full">
       <div className="border w-[98%] h-[78%] my-2 overflow-auto">
-        <Converstation />
+        <Conversation />
       </div>
       <UserChat onSend={handleChatSend} onHandleAbort={handleAbort} />
     </div>
