@@ -7,7 +7,6 @@ import { chatWithModel } from '@renderer/utils/chatWithModel'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { Conversation } from './Conversation'
-import { numberFormat } from '@renderer/utils/numberFormat'
 import { IMessage } from '../interfaces/IMessage'
 
 export default function RightBar(): JSX.Element {
@@ -19,7 +18,6 @@ export default function RightBar(): JSX.Element {
     setMessage,
     setCurrentMessage,
     setIsWorking,
-    isWorking,
     messages
   } = useChatStore()
   const [resText, setRestText] = useState('')

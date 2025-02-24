@@ -32,11 +32,12 @@ export const chatWithModel = async (
       while (!result.done && !shouldStop) {
         const resMsg = new TextDecoder().decode(result?.value)
         const msg = JSON.parse(resMsg) as IChatResponse
+        //console.log(msg)
 
         if ('error' in msg) {
           error = resMsg.error || 'Failed to chat'
           shouldStop = true
-          console.log('aaa', error)
+          //console.log('aaa', error)
         }
 
         message = { role: msg.message.role, content: msg.message.content }

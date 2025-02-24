@@ -42,6 +42,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       set((state) => {
         const updatedMessages = [...state.messages, state.currentMessage]
         set({ currentMessage: null })
+        set({ isWorking: true })
         return {
           messages: updatedMessages
         }
