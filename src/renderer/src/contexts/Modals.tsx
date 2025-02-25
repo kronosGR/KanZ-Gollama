@@ -3,6 +3,7 @@ import { ModelSearch } from '@renderer/components/ModelSearch'
 import { ModelSettings } from '@renderer/components/ModelSettings'
 import { Notification } from '@renderer/components/Notification'
 import { Statistics } from '@renderer/components/Statistics'
+import { IMessage } from '@renderer/interfaces/IMessage'
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 
 export const MODALS = {
@@ -26,6 +27,9 @@ interface ModalProps {
   content?: ReactNode
   message?: string
   type?: string
+  x?: number
+  y?: number
+  msg?: IMessage
 }
 
 interface Modal {
@@ -39,7 +43,7 @@ interface ModalStore {
 
 interface ContextType {
   showModal: (modalType: string, modalProps: ModalProps) => void
-  hideModal: (modalType: string) => void
+  hideModal: (modalType: string, title: string) => void
   getInfoModal: (modalType: string) => { modalType: string; modalProps: ModalProps }
   store: ModalStore | null
 }

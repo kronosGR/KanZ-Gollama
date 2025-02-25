@@ -30,6 +30,18 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
     navigator.clipboard.writeText(content)
   }
 
+  const handleStatistics = (
+    message: IMessage,
+    e: React.MouseEvent<SVGElement, MouseEvent>
+  ): void => {
+    showModal(MODALS.STATISTICS_MODAL, {
+      title: 'Response Statistics',
+      msg: message,
+      x: e.clientX,
+      y: e.clientY
+    })
+  }
+
   return (
     <div className="flex w-[100%] mb-2">
       <div className={`flex w-[100%] items-center ${location}`}>
@@ -40,7 +52,11 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
           <div className={`w-[85%] border p-2 text-xs  overflow-auto ${bgColor}`}>
             <div className={`border-b-2 flex justify-end p-1 mb-3 ${borderColor}`}>
               {message?.role === 'assistant' && (
-                <IoMdStats className="cursor-pointer" title="Response Statistics" />
+                <IoMdStats
+                  className="cursor-pointer"
+                  title="Response Statistics"
+                  onClick={(e) => handleStatistics(message, e)}
+                />
               )}
               <HiClipboardCopy
                 title="Copy to Clipboard"
