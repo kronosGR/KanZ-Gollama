@@ -1,16 +1,19 @@
 import { IChatRequest } from '@renderer/interfaces/IChatRequest'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
-import { CHAT } from './constants'
+import { CHAT, GENERATE } from './constants'
 import { IMessage } from '@renderer/interfaces/IMessage'
+import { useChatStore } from '@renderer/stores/useChatStore'
 
 export const chatWithModel = async (
   request: IChatRequest,
+  aIType: string,
   onProgress: (response: IChatResponse) => void,
   signal: AbortSignal
 ): Promise<void | { message: string }> => {
-  const host = CHAT
+  const host = aIType === 'generate' ? GENERATE : CHAT
 
   if (request.stream) {
+    let resMsg = ''
     try {
       const response = await fetch(host, {
         method: 'POST',
@@ -30,17 +33,19 @@ export const chatWithModel = async (
       let error = ''
 
       while (!result.done && !shouldStop) {
-        const resMsg = new TextDecoder().decode(result?.value)
+        resMsg = new TextDecoder().decode(result?.value)
         const msg = JSON.parse(resMsg) as IChatResponse
-        //console.log(msg)
 
         if ('error' in msg) {
           error = resMsg.error || 'Failed to chat'
           shouldStop = true
-          //console.log('aaa', error)
+          // console.error('error: ', error)
         }
 
-        message = { role: msg.message.role, content: msg.message.content }
+        message = {
+          role: 'assistant', // msg.message.role
+          content: aIType === 'chat' ? msg.message.content : msg.response
+        }
         progress = {
           model: msg.model,
           message: message,
@@ -50,16 +55,16 @@ export const chatWithModel = async (
 
         if (msg.done) {
           progress = {
-            model: msg.model,
+            model: msg?.model,
             message: message,
-            done: msg.done,
-            created_at: msg.created_at,
-            total_duration: msg.total_duration,
-            load_duration: msg.load_duration,
-            prompt_eval_count: msg.prompt_eval_count,
-            prompt_eval_duration: msg.prompt_eval_duration,
-            eval_count: msg.eval_count,
-            eval_duration: msg.eval_duration
+            done: msg?.done,
+            created_at: msg?.created_at,
+            total_duration: msg?.total_duration,
+            load_duration: msg?.load_duration,
+            prompt_eval_count: msg?.prompt_eval_count,
+            prompt_eval_duration: msg?.prompt_eval_duration,
+            eval_count: msg?.eval_count,
+            eval_duration: msg?.eval_duration
           }
         }
 

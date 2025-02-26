@@ -8,6 +8,7 @@ import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { Conversation } from './Conversation'
 import { IMessage } from '../interfaces/IMessage'
+import { get } from 'http'
 
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()
@@ -18,7 +19,8 @@ export default function RightBar(): JSX.Element {
     setMessage,
     setCurrentMessage,
     setIsWorking,
-    messages
+    messages,
+    aIType
   } = useChatStore()
   const [resText, setRestText] = useState('')
   const endChatRef = useRef<HTMLDivElement>(null)
@@ -68,14 +70,17 @@ export default function RightBar(): JSX.Element {
     setMessage({ role: 'user', content: msg })
     const request: IChatRequest = {
       model: selectedModel?.name,
-      stream: true,
+      stream: true
       // messages: [{ role: currentMessage?.role, content: currentMessage?.content }]
-      messages: getMessages()
+      //messages: getMessages()
     }
+
+    aIType === 'generate' ? (request.prompt = msg) : (request.messages = getMessages())
 
     let resTXT = ''
     const result = await chatWithModel(
       request,
+      aIType,
       (response: IChatResponse) => {
         if (response.status === 'Failed to chat') {
           console.log(response)

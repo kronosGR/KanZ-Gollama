@@ -6,4 +6,5 @@ export interface IChatRequest {
   stream?: boolean
   format?: string | object
   keep_alive?: string | number
+  prompt?: string
 }

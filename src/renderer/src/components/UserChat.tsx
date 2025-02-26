@@ -1,7 +1,7 @@
 import { useChatStore } from '@renderer/stores/useChatStore'
 import React, { useEffect, useRef, useState } from 'react'
-import { FaChevronCircleUpt, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa'
-import { title } from 'process'
+import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa'
+
 import { IMessage } from '@renderer/interfaces/IMessage'
 
 interface IProps {
@@ -11,11 +11,12 @@ interface IProps {
 
 export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
   const [message, setMessage] = useState<string>()
+  const [aiType, setAIType] = useState<string>('generate')
   const [curUserMsg, setCurUserMsg] = useState<IMessage | null>(null)
   const [curMsgIdx, setCurMsgIdx] = useState<number>(0)
   const { getUserMessages, messages } = useChatStore()
   const textAreaRef = useRef<HTMLAreaElement>(null)
-  const { isWorking } = useChatStore()
+  const { isWorking, setAiType } = useChatStore()
 
   const focusTextArea = (): void => {
     if (textAreaRef.current) {
@@ -104,13 +105,19 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
     })
   }
 
+  const handleType = (e): void => {
+    setAIType(e.target.value)
+    setAiType(e.target.value)
+    // console.log('AI Type:', e.target.value)
+  }
+
   return (
     <div className="absolute bottom-4 border border-gray-800 w-[65%] flex flex-col p-2 justify-center items-center">
       <textarea
         autoFocus
         ref={textAreaRef}
-        className="border resize-none w-[95%] p-1"
-        rows={5}
+        className="border resize-none w-[95%] p-1 text-sm"
+        rows={4}
         value={message}
         disabled={isWorking}
         onChange={(e) => {
@@ -118,6 +125,34 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
         }}
         onKeyDown={onEnterPress}
       ></textarea>
+      <div>
+        <input
+          onChange={handleType}
+          checked={aiType === 'generate'}
+          type="radio"
+          id="generate"
+          name="aitype"
+          value="generate"
+          disabled={isWorking}
+        />
+        <label className="ms-1" htmlFor="generate">
+          Generate
+        </label>
+
+        <input
+          onChange={handleType}
+          className="ms-3"
+          type="radio"
+          id="chat"
+          name="aitype"
+          value="chat"
+          checked={aiType === 'chat'}
+          disabled={isWorking}
+        />
+        <label className="ms-1" htmlFor="chat">
+          Chat
+        </label>
+      </div>
       <div className="flex items-center">
         {!isWorking && (
           <FaChevronCircleUp
