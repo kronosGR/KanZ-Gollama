@@ -8,7 +8,6 @@ import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { Conversation } from './Conversation'
 import { IMessage } from '../interfaces/IMessage'
-import { get } from 'http'
 
 export default function RightBar(): JSX.Element {
   const { selectedModel } = useModelStore()

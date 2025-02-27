@@ -4,9 +4,11 @@ import { HiMiniUserGroup } from 'react-icons/hi2'
 import { HiClipboardCopy } from 'react-icons/hi'
 import { FaBrain } from 'react-icons/fa'
 import Markdown from 'react-markdown'
+import { marked, use } from 'marked'
 import { useChatStore } from '@renderer/stores/useChatStore'
 import { MODALS, useModalsContext } from '@renderer/contexts/Modals'
 import { IoMdStats } from 'react-icons/io'
+import { dirtyHTML } from '@renderer/utils/dirtyHTML'
 
 interface IProps {
   message: IMessage | null
@@ -42,6 +44,10 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
     })
   }
 
+  useEffect(() => {
+    //console.log(message?.content)
+  }, [message])
+
   return (
     <div className="flex w-[100%] mb-2">
       <div className={`flex w-[100%] items-center ${location}`}>
@@ -64,35 +70,40 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
                 onClick={() => handleCopy(message?.content)}
               />
             </div>
-            <Markdown
-              components={{
-                pre: ({ node, children, ...props }) => {
-                  let language = '...'
-                  if (!isWorking)
-                    language = node?.children[0]?.properties?.className[0].replace('language-', '')
 
-                  const content = node?.children[0]?.children[0]?.value || ''
-                  return (
-                    <pre className="bg-blue-100 my-3 p-1 text-wrap" {...props}>
-                      <div className="border-b-2 border-blue-200  flex justify-between p-1 mb-3">
-                        <div className="font-bold italic text-[10px] ">{language}</div>
-                        <HiClipboardCopy
-                          title="Copy to Clipboard"
-                          className="cursor-pointer"
-                          onClick={() => handleCopy(content)}
-                        />
-                      </div>
-                      {children}
-                    </pre>
-                  )
-                },
-                code: ({ ...props }) => <code className="bg-slate-100 px-1 " {...props} />
-              }}
-            >
-              {message?.content}
-            </Markdown>
+            {isWorking && (
+              <div dangerouslySetInnerHTML={dirtyHTML(marked.parse(message?.content))}></div>
+            )}
+            {!isWorking && (
+              <Markdown
+                components={{
+                  pre: ({ node, children, ...props }) => {
+                    let language = node?.children[0]?.properties?.className[0].replace(
+                      'language-',
+                      ''
+                    )
 
-            {/* <div>{message?.content}</div> */}
+                    const content = node?.children[0]?.children[0]?.value || ''
+                    return (
+                      <pre className="bg-blue-100 my-3 p-1 text-wrap" {...props}>
+                        <div className="border-b-2 border-blue-200  flex justify-between p-1 mb-3">
+                          <div className="font-bold italic text-[10px] ">{language}</div>
+                          <HiClipboardCopy
+                            title="Copy to Clipboard"
+                            className="cursor-pointer"
+                            onClick={() => handleCopy(content)}
+                          />
+                        </div>
+                        {children}
+                      </pre>
+                    )
+                  },
+                  code: ({ ...props }) => <code className="bg-slate-100 px-1 " {...props} />
+                }}
+              >
+                {message?.content}
+              </Markdown>
+            )}
           </div>
         }
 
