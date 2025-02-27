@@ -11,7 +11,7 @@ interface IProps {
 
 export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
   const [message, setMessage] = useState<string>()
-  const [aiType, setAIType] = useState<string>('generate')
+  const [aiType, setAIType] = useState<string>('chat')
   const [curUserMsg, setCurUserMsg] = useState<IMessage | null>(null)
   const [curMsgIdx, setCurMsgIdx] = useState<number>(0)
   const { getUserMessages, messages } = useChatStore()
@@ -48,7 +48,7 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
   useEffect((): (() => void) => {
     updateMessageHistory()
     const onKeysDown = (e: KeyboardEvent): void => {
-      if ((e.key === 'c' || e.key === 'C') && e.ctrlKey === true) {
+      if ((e.key === 'c' || e.key === 'C') && e.ctrlKey === true && e.shiftKey === true) {
         onHandleAbort()
         focusTextArea()
       }
@@ -128,20 +128,6 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
       <div>
         <input
           onChange={handleType}
-          checked={aiType === 'generate'}
-          type="radio"
-          id="generate"
-          name="aitype"
-          value="generate"
-          disabled={isWorking}
-        />
-        <label className="ms-1" htmlFor="generate">
-          Generate
-        </label>
-
-        <input
-          onChange={handleType}
-          className="ms-3"
           type="radio"
           id="chat"
           name="aitype"
@@ -151,6 +137,20 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
         />
         <label className="ms-1" htmlFor="chat">
           Chat
+        </label>
+
+        <input
+          onChange={handleType}
+          className="ms-3"
+          checked={aiType === 'generate'}
+          type="radio"
+          id="generate"
+          name="aitype"
+          value="generate"
+          disabled={isWorking}
+        />
+        <label className="ms-1" htmlFor="generate">
+          Generate
         </label>
       </div>
       <div className="flex items-center">
@@ -177,7 +177,7 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
         </button>
         {isWorking && (
           <button
-            title="Ctrl + C"
+            title="Ctrl + Shift + C"
             type="button"
             className="m-2 bg-red-500 text-white p-2 rounded "
             onClick={onHandleAbort}

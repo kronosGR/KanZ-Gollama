@@ -1,5 +1,5 @@
 import { IMessage } from '@renderer/interfaces/IMessage'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HiMiniUserGroup } from 'react-icons/hi2'
 import { HiClipboardCopy } from 'react-icons/hi'
 import { FaBrain } from 'react-icons/fa'
@@ -29,6 +29,7 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
       message: 'Copied to Clipboard',
       type: 'success'
     })
+
     navigator.clipboard.writeText(content)
   }
 
@@ -44,9 +45,22 @@ export const ChatItem: React.FC<IProps> = ({ message }) => {
     })
   }
 
+  const onKeysDown = (e: KeyboardEvent): void => {
+    if ((e.key === 'c' || e.key === 'C') && e.ctrlKey === true) {
+      navigator.clipboard.writeText(document.getSelection()?.toString())
+    }
+  }
+
   useEffect(() => {
-    //console.log(message?.content)
-  }, [message])
+    document.addEventListener('selectionchange', () => {})
+
+    document.addEventListener('keydown', onKeysDown)
+
+    return function cleanup(): void {
+      document.removeEventListener('keydown', onKeysDown)
+      document.removeEventListener('selectionchange', () => {})
+    }
+  }, [])
 
   return (
     <div className="flex w-[100%] mb-2">
