@@ -70,8 +70,6 @@ export default function RightBar(): JSX.Element {
     const request: IChatRequest = {
       model: selectedModel?.name,
       stream: true
-      // messages: [{ role: currentMessage?.role, content: currentMessage?.content }]
-      //messages: getMessages()
     }
 
     aIType === 'generate' ? (request.prompt = msg) : (request.messages = getMessages())

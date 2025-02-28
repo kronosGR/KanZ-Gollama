@@ -46,6 +46,7 @@ export const UserChat: React.FC<IProps> = ({ onSend, onHandleAbort }) => {
   }, [messages])
 
   useEffect((): (() => void) => {
+    setAiType(aiType)
     updateMessageHistory()
     const onKeysDown = (e: KeyboardEvent): void => {
       if ((e.key === 'c' || e.key === 'C') && e.ctrlKey === true && e.shiftKey === true) {
