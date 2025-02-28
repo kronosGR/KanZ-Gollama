@@ -65,7 +65,7 @@ export default function Models(): JSX.Element {
     <div>
       <div className="flex justify-between">
         <h2 className="text-xl font-bold">Models</h2>
-        <p title="Settings" className="cursor-pointer">
+        <div title="Settings" className="cursor-pointer">
           <button
             onClick={() => showModal(MODALS.MODEL_SETTINGS_MODAL, { title: 'Model Settings' })}
           >
@@ -77,7 +77,7 @@ export default function Models(): JSX.Element {
           >
             <IoMdStats />
           </button>
-        </p>
+        </div>
       </div>
       <select onChange={(e) => handleModelChange(e)}>
         <option value="none">Select model</option>

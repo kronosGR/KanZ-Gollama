@@ -1,3 +1,4 @@
+import { IConversation } from '@renderer/interfaces/IConversation'
 import { IMessage } from '@renderer/interfaces/IMessage'
 import { create } from 'zustand'
 
@@ -7,6 +8,7 @@ interface ChatState {
   currentMessage: IMessage | null
   stats: boolean
   aIType: string
+  conversations: IConversation[]
   setIsWorking: (state: boolean) => void
   getMessages: () => IMessage[]
   getAIMessages: () => IMessage[]
@@ -15,6 +17,7 @@ interface ChatState {
   resetCurrentMessage: () => void
   setMessage: (message: IMessage) => void
   setStats: (status: boolean) => void
+  setConversations: (conversations: IConversation[]) => void
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -23,6 +26,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   currentMessage: null,
   stats: false,
   aIType: 'generate',
+  conversations: [{ name: 'Default', messages: [] }],
   setIsWorking: (state: boolean): void => set({ isWorking: state }),
   getMessages: (): IMessage[] => {
     return get().messages
@@ -64,5 +68,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
   setAiType: (type: string): void => {
     set({ aIType: type })
+  },
+  setConversations: (conversations: IConversation[]): void => {
+    set({ conversations })
   }
 }))
