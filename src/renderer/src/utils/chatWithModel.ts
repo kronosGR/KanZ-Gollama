@@ -2,7 +2,6 @@ import { IChatRequest } from '@renderer/interfaces/IChatRequest'
 import { IChatResponse } from '@renderer/interfaces/IChatResponse'
 import { CHAT, GENERATE } from './constants'
 import { IMessage } from '@renderer/interfaces/IMessage'
-import { useChatStore } from '@renderer/stores/useChatStore'
 
 export const chatWithModel = async (
   request: IChatRequest,

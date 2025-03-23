@@ -2,5 +2,6 @@ import { IMessage } from './IMessage'
 
 export interface IConversation {
   name: string
-  messages: IMessage[]
+  messages?: IMessage[]
+  model: string
 }

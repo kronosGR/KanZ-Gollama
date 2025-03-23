@@ -8,6 +8,7 @@ interface ChatState {
   currentMessage: IMessage | null
   stats: boolean
   aIType: string
+  currentConversation: IConversation
   conversations: IConversation[]
   setIsWorking: (state: boolean) => void
   getMessages: () => IMessage[]
@@ -17,6 +18,7 @@ interface ChatState {
   resetCurrentMessage: () => void
   setMessage: (message: IMessage) => void
   setStats: (status: boolean) => void
+  setCurrentConversation: (conversation: IConversation) => void
   setConversations: (conversations: IConversation[]) => void
 }
 
@@ -26,7 +28,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   currentMessage: null,
   stats: false,
   aIType: 'generate',
-  conversations: [{ name: 'Default', messages: [] }],
+  currentConversation: { name: 'Default', messages: [], model: '' },
+  conversations: [{ name: 'Default', messages: [], model: '' }],
   setIsWorking: (state: boolean): void => set({ isWorking: state }),
   getMessages: (): IMessage[] => {
     return get().messages
@@ -71,5 +74,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
   setConversations: (conversations: IConversation[]): void => {
     set({ conversations })
+  },
+  setCurrentConversation: (conversation: IConversation): void => {
+    set({ currentConversation: conversation })
   }
 }))
